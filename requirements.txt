@@ -1,5 +1,3 @@
-cv2
 matplotlib
 numpy
-os
 opencv-contrib-python
