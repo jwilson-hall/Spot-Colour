@@ -7,9 +7,6 @@ image_path = os.path.dirname
 
 classNames= []
 
-classFile ='coco.names'
-with open(classFile,'rt') as f:
-    classNames = f.read().rstrip('\n').split('\n')
 
 # configPath = 'frozen_inference_graph.pb'
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
@@ -48,31 +45,19 @@ def run_algorithm(img, numb):
     # (success, saliencyMap) = saliency.computeSaliency(img)
     # saliencyMap = (saliencyMap * 255).astype("uint8")
 
-    # Initialise the more fine-grained saliency detector and compute the saliencyMap
+    # Initialise static saliency fine grained detector and compute the saliencyMap
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()
     (success, saliencyMap) = saliency.computeSaliency(img)
     newSaliencyMap=saliencyMap*255
 
-    threshMap = cv2.threshold(newSaliencyMap.astype("uint8"), 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-    # threshMap =  cv2.threshold(newSaliencyMap.astype("uint8"),0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
-    # blur = cv2.GaussianBlur(newSaliencyMap,(5,5),0)
-    # threshMap = cv2.threshold(blur.astype("uint8"),0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    threshMap = cv2.threshold(newSaliencyMap.astype("uint8"), 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]#globally thresholding the image using otsu's algorithm creating a binary mask
 
-    output_img = gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    testGrey = img.copy()
+    output_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)#creating a greyscale copy of the original image
+    testGrey = img.copy()#creates a colour copy of the original image
     for i in range(len(img)):
         for j in range(len(img[0])):
             testGrey[i][j] = np.array([output_img[i][j],output_img[i][j],output_img[i][j]])
-    # print(type(output_img))
-    # print(type(img))
-    # print(type(output_img[50][50]))
-    # print(type(img[50][50]))
-    # print(type(np.array([output_img[0][0],output_img[0][0],output_img[0][0]])))
-    # for i in range(len(threshMap)):
-    #     for j in range(len(threshMap[0])):
-    #         if (threshMap[i][j]==255 and (i > y1 and j > x1) and (i < y2 and j < x2)):
-    #             img[i][j] = np.array([output_img[i][j],output_img[i][j],output_img[i][j]])
-    # print(bbox)
+    
     maxX = 0
     maxY = 0
     minX = len(img)*len(img[0])
@@ -86,21 +71,15 @@ def run_algorithm(img, numb):
         minX = min(minX,b[2],b[0])
         minY = min(minY,b[3],b[1])
     print(minX,":",minY,"  ",maxX,":",maxY)
-    for b in boxes:
+    for b in boxes: # finding the bounding boxes area
         x1 = b[0]
         y1 = b[1]
-        x2 = b[2]
-        y2 = b[3]
-        # start_point = (x1, y1)
-        # end_point = (x2+x1, y2+y1)
-        # cv2.rectangle(testGrey,[x1,y1,x2,y2],color=(150,150,0),thickness=2)
-        # cv2.rectangle(testGrey,start_point,end_point,color=(0,0,255),thickness=2)
-        # print(x1,y1,x2,y2)
-        # maxJ = 0
-        # maxI = 0
+        x2 = b[2]+b[0]#the b[2] and b[3] represents a length not a coordinate so adding b[0] to b[2] finds the coord of the second point
+        y2 = b[3]+b[1]
+        
         for i in range(len(img)):
             for j in range(len(img[0])):
-                if (threshMap[i][j] == 255 and (j >= x1 and i >= y1) and (j <= x2+x1 and i <= y2+y1)):#selecting pixels that are only inside the bounding boxes and where the mask is white, making the ROI in colour
+                if (threshMap[i][j] == 255 and (j >= x1 and i >= y1) and (j <= x2 and i <= y2)):#selecting pixels that are only inside the bounding boxes and where the mask is white, making the ROI in colour
                     testGrey[i][j] = img[i][j]
                     newThrMap[i][j] = 255
 
@@ -115,7 +94,7 @@ def run_algorithm(img, numb):
     # cv2.imshow("Output", saliencyMap)
     # cv2.waitKey(0)
 data_path = os.getcwd()+"\\"
-# img = cv2.imread(data_path+"test_data\\"+str(4)+'.jpg')
+# img = cv2.imread(data_path+"test_data\\"+str(1)+'.jpg')
 # run_algorithm(img, 1)
 for i in range(1, 11):
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
