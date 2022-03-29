@@ -81,7 +81,7 @@ def run_algorithm(img, numb):
     newThrMap.fill(0)
     # boxes.remove(boxes[0])
     for b in boxes:
-        maxX = max(maxX,b[0],b[2])
+        maxX = max(maxX,b[0],b[2])#finding the overall bounding area of all the boxes
         maxY = max(maxY,b[1],b[3])
         minX = min(minX,b[2],b[0])
         minY = min(minY,b[3],b[1])
@@ -100,16 +100,16 @@ def run_algorithm(img, numb):
         # maxI = 0
         for i in range(len(img)):
             for j in range(len(img[0])):
-                if (threshMap[i][j] == 255 and (j >= x1 and i >= y1) and (j <= x2+x1 and i <= y2+y1)):
+                if (threshMap[i][j] == 255 and (j >= x1 and i >= y1) and (j <= x2+x1 and i <= y2+y1)):#selecting pixels that are only inside the bounding boxes and where the mask is white, making the ROI in colour
                     testGrey[i][j] = img[i][j]
-                    newThrMap[i][j] = 255                
+                    newThrMap[i][j] = 255
 
-    # cv2.resize(testGrey, (810, 1080))  
+    # cv2.resize(testGrey, (810, 1080))
     # cv2.imshow("Output",testGrey)
     # cv2.imshow("Threshold map",newThrMap)
     # data_path = os.path.dirname(os.getcwd())+"\\data\\"
     # Writing Images
-    cv2.imwrite(data_path+"train_output\\v2\\"+str(numb)+"_p.jpg",testGrey)
+    cv2.imwrite(data_path+"train_output\\v2\\"+str(numb)+"_p.jpg",testGrey)#writing output mask and final product of the use of that mask
     cv2.imwrite(data_path+"train_output\\v2\\"+str(numb)+"_thr.jpg",newThrMap)
     # cv2.imshow("Output image",output_img)
     # cv2.imshow("Output", saliencyMap)
