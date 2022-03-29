@@ -83,13 +83,14 @@ def run_algorithm(img, numb):
                     testGrey[i][j] = img[i][j]
                     newThrMap[i][j] = 255
 
-    # cv2.resize(testGrey, (810, 1080))
     # cv2.imshow("Output",testGrey)
     # cv2.imshow("Threshold map",newThrMap)
     # data_path = os.path.dirname(os.getcwd())+"\\data\\"
     # Writing Images
     cv2.imwrite(data_path+"train_output\\v2\\"+str(numb)+"_p.jpg",testGrey)#writing output mask and final product of the use of that mask
     cv2.imwrite(data_path+"train_output\\v2\\"+str(numb)+"_thr.jpg",newThrMap)
+    # cv2.imwrite(data_path+"test_output\\v2\\"+str(numb)+"_p.jpg",testGrey)#writing output mask and final product of the use of that mask
+    # cv2.imwrite(data_path+"test_output\\v2\\"+str(numb)+"_thr.jpg",newThrMap)
     # cv2.imshow("Output image",output_img)
     # cv2.imshow("Output", saliencyMap)
     # cv2.waitKey(0)
@@ -99,3 +100,6 @@ data_path = os.getcwd()+"\\"
 for i in range(1, 11):
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     run_algorithm(img, i)
+# for i in range(1, 11):
+#     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+#     run_algorithm(img, i)
