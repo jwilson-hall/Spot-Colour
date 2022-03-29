@@ -97,6 +97,7 @@ def run_algorithm(img, numb):
 data_path = os.getcwd()+"\\"
 # img = cv2.imread(data_path+"test_data\\"+str(1)+'.jpg')
 # run_algorithm(img, 1)
+#running the algorithm over the 10 train and test images
 for i in range(1, 11):
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     run_algorithm(img, i)
