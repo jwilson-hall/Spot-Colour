@@ -2,5 +2,4 @@ cv2
 matplotlib
 numpy
 os
-sympy
 opencv-contrib-python
