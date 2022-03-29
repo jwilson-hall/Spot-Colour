@@ -26,16 +26,23 @@ def static_saliency(img, numb):
             if (threshMap[i][j]==0):
                 img[i][j] = np.array([output_img[i][j],output_img[i][j],output_img[i][j]])
 
-    
-    cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_p.jpg",img)
-    cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
+    # Show Images
+    # cv2.imshow("Output Image", img)
+    # cv2.imshow("Thresholds", threshMap)
+    # cv2.imshow("Output", saliencyMap)
+    # cv2.waitKey(0)
+    # Writing Images
+    cv2.imwrite(data_path+"train_output\\v1\\"+str(numb)+"_p.jpg",img)
+    cv2.imwrite(data_path+"train_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
 
 
-
-data_path = os.path.dirname(os.getcwd())+"\\data\\"
+train_data_set = "train_data\\"
+test_data_set = "test_data\\"
+data_path = os.getcwd()+"\\"
 files = os.listdir(data_path)
-# img = cv2.imread(data_path+"test_data\\"+str(14)+'.jpg')
+
+# img = cv2.imread(data_path+train_data_set+str(1)+'.jpg')
 # static_saliency(img,1)
 for i in range(1,11):
-    img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+    img = cv2.imread(data_path+train_data_set+str(i)+'.jpg')
     static_saliency(img,i)
