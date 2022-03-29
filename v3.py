@@ -27,7 +27,7 @@ def mask_rcnn(img, numb):
 		class_id = box[1]
 		# print(box)
 		confs = box[2]
-		if confs < 0.40:
+		if confs < 0.5:
 			continue
 
 		# Get box coordinates
@@ -64,6 +64,7 @@ def mask_rcnn(img, numb):
 	# cv2.imshow("Image", img)
 	# cv2.imshow("Black image", black_image)
 	# cv2.waitKey(0)
+	print("Done with image ",numb)
 	# cv2.imwrite(data_path+"train_output\\v3\\"+str(numb)+"_p.jpg",img)
 	# cv2.imwrite(data_path+"train_output\\v3\\"+str(numb)+"_thr.jpg",black_image)
 	cv2.imwrite(data_path+"test_output\\v3\\"+str(numb)+"_p.jpg",img)
