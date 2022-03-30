@@ -5,10 +5,6 @@ import numpy as np
 thres = 0.45 # Threshold to detect object
 image_path = os.path.dirname
 
-classNames= []
-
-
-# configPath = 'frozen_inference_graph.pb'
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
 weightsPath = 'frozen_inference_graph.pb'
 
@@ -35,7 +31,7 @@ def run_algorithm(img, numb):
         x2 = box[2]
         y2 = box[3]
         boxes.append([x1,y1,x2,y2])
-        confidenceList.append(confs)
+        confidenceList.append(confidence)
         # print(confs)
         # print(classNames[classId])
         # cv2.rectangle(img,[x1,y1,x2,y2],color=(0,0,255),thickness=3)

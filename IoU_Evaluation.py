@@ -1,4 +1,3 @@
-from collections import namedtuple
 import numpy as np
 import cv2
 import os
@@ -13,7 +12,7 @@ def calc_IoU(mask1, mask2):   # From the question.
     return iou
 
 
-data_path = os.path.dirname(os.getcwd())+"\\pipeline\\data\\"
+data_path = os.getcwd()+"\\"
 ground_truth_path = data_path+"Ground_Truth\\test\\"
 
 train_data_path1 = data_path+"test_output\\v1\\"
@@ -29,7 +28,7 @@ def findMaxIoU():
         IoU_Max = 0
         for i in range(1,6):
             img_A = cv2.imread(ground_truth_path+str(result_img+j)+'_gt'+str(i)+'.jpg')
-            img_B = cv2.imread(train_data_path4+str(result_img+j)+'_thr.jpg')
+            img_B = cv2.imread(train_data_path3+str(result_img+j)+'_thr.jpg')
             # img_C = cv2.imread(ground_truth_path+'1_gt1.jpg')
             IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
             print(calc_IoU(img_A,img_B))
