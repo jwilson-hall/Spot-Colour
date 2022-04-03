@@ -67,8 +67,51 @@ def find_optimal_lines(ogSlice,numb):
     print("Compactness ",compactness,"%",numb)
     return temp
 
+def fillSmallSpace(img, workerRange,x,y):
+    count = 0
+    down = 0
+    up = 0
+    left = 0
+    right = 0
+    tempFalse = False
+    for i in range(x+1,min(x+workerRange,len(img))):
+        if img[i][y] != 0:
+            if tempFalse!= True:
+                count+=1 
+                down+=1
+                tempFalse=True
+                break    
+    tempFalse = False
+    for i in range(x-1,max(x-workerRange,-1),-1):
+        if img[i][y] != 0:
+            if tempFalse != True:
+                count+=1
+                up+=1
+                tempFalse=True
+                break
+    if count == 2:
+        return count
+    else:
+        count = 0
+    tempFalse = False
+    for i in range(y+1,min(y+workerRange,len(img[0])-1)):
+        if img[x][i] != 0:
+            if tempFalse!= True:
+                count+=1
+                right+=1
+                tempFalse=True
+                break
+    tempFalse = False
+    for i in range(y-1,max(y-workerRange,-1),-1):
+        if img[x][i] != 0:
+            if tempFalse != True:
+                count+=1
+                left+=1
+                tempFalse=True
+                break
+    return count
 
-def fillSmallSpace(mask,lineImage, workerRange,x,y):
+def smoothing(mask,lineImage, workerRange,x,y):
     maskCount = 0
     lineCount = 0
     tempFalse = False
@@ -124,6 +167,20 @@ def fillSmallSpace(mask,lineImage, workerRange,x,y):
 
     return lineCount,maskCount
 
+def imshow_components(labels):
+    # Map component labels to hue val
+    label_hue = np.uint8(179*labels/np.max(labels))
+    blank_ch = 255*np.ones_like(label_hue)
+    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
+
+    # cvt to BGR for display
+    labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
+
+    # set bg label to black
+    labeled_img[label_hue==0] = 0
+
+    cv2.imshow('labeled.png', labeled_img)
+    # cv2.waitKey()
 
 
 
@@ -177,7 +234,7 @@ def run_algorithm(img, numb):
     ogSlice = img[minY:maxY, minX:maxX]
     maskSlice = black_image[minY:maxY, minX:maxX]
     ogSlice = find_optimal_lines(ogSlice,numb)
-    ogSlice = cv2.dilate(ogSlice,(5,5),iterations=1)
+    ogSlice = cv2.dilate(ogSlice,(5,5),iterations=3)
     # cv2.imshow("OG Slice ", ogSlice)
     newSlice = ogSlice.copy()
     newSlice.fill(0)
@@ -194,26 +251,43 @@ def run_algorithm(img, numb):
     ogSlice = newSlice
     # cv2.imshow("OG Slice ", ogSlice)
     cpSlice = maskSlice.copy()#
-    workerRange = int(max(len(ogSlice)/10,len(ogSlice[0])/10))
+    
+    workerRange = int(max(len(ogSlice)/20,len(ogSlice[0])/20))
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
-                workVal = fillSmallSpace(maskSlice,ogSlice,workerRange,i,j)
+                workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
                 if workVal[0] >= 2 and workVal[1] >= 1 :
                     cpSlice[i][j] = 255
                 # elif workVal[0] > 3:
                 #     cpSlice[i][j] = 255
-    cpSlice = cv2.bitwise_or(maskSlice,ogSlice)
+    # ogSlice = cpSlice.copy()
+    cpSlice2 = cv2.bitwise_or(maskSlice,ogSlice)
+    cpSlice = cv2.bitwise_or(cpSlice2,cpSlice)
+    for i in range(len(cpSlice)):
+        for j in range(len(cpSlice[0])):
+            if maskSlice[i][j] != 255:
+                workVal = fillSmallSpace(ogSlice,2,i,j)
+                if workVal == 2:
+                    cpSlice[i][j] = 255
+
+    # numLabels,imgLabels = cv2.connectedComponents(cpSlice)
+    # imshow_components(imgLabels)  
+
     maskSlice = cpSlice.copy()
     # imshow("Cp Slice",maskSlice)
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
-                workVal = fillSmallSpace(maskSlice,ogSlice,workerRange,i,j)
+                workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
                 if workVal[0] > 3 or workVal[1] > 3 :
                     maskSlice[i][j] = 255
     cpSlice = maskSlice.copy()
-    imshow("Cp Slice ",cpSlice)
+    # imshow("Cp Slice ",cpSlice)
+
+    numLabels,imgLabels = cv2.connectedComponents(cpSlice)
+    imshow_components(imgLabels) 
+
     black_image_lines = black_image.copy()
     # black_image_lines.fill(0)
     for i in range(len(cpSlice)):
@@ -233,13 +307,13 @@ def run_algorithm(img, numb):
             if black_image[i][j] != 255:
                 img[i][j] = grey[i][j]
 
-    cv2.imshow("Image", img)
+    # cv2.imshow("Image", img)
     # cv2.imshow("Black image", black_image)
     # cv2.imshow("Black image lines", black_image_lines)
     cv2.waitKey(0)
             
 
-for i in range(1,3):
+for i in range(1,6):
     if i == 3:
         continue
     mask = cv2.imread("train_data\\"+str(i)+".jpg")
