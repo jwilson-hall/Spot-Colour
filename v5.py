@@ -10,10 +10,15 @@ import os
 from multiprocessing import Process
 
 confsThr = 0.4
-
-
+boxThr = 0.5
+#Loading in rcnn mask model
 net = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\\mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
-
+#Loading in bounding box model
+net2 = cv2.dnn_DetectionModel("frozen_inference_graph.pb","ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt")
+net2.setInputSize(320,320)
+net2.setInputScale(1.0/127.5)
+net2.setInputMean((127.5,127.5,127.5))
+net2.setInputSwapRB(True)
 #load our input image and grab its spatial dimensions
 
 def find_optimal_lines(ogSlice,numb):
@@ -62,161 +67,64 @@ def find_optimal_lines(ogSlice,numb):
     print("Compactness ",compactness,"%",numb)
     return temp
 
-# def fillSmallSpace(mask,lineImage, workerRange,x,y):
-#     maskCount = 0
-#     lineCount = 0
-#     tempFalse = False
-#     tempFalse2 = False
-#     for i in range(x+1,min(x+workerRange,len(mask))):
-#         if mask[i][y] != 0:
-#             if tempFalse!= True:
-#                 maskCount+=1 
-#                 tempFalse=True
-#         elif lineImage[i][y] != 0:
-#             if tempFalse2 != True:
-#                 lineCount+=1
-#                 tempFalse2=True
-                
-#     tempFalse = False
-#     tempFalse2 = False
-#     for i in range(x-1,max(x-workerRange,-1),-1):
-#         if mask[i][y] != 0:
-#             if tempFalse!= True:
-#                 maskCount+=1 
-#                 tempFalse=True
-#         elif lineImage[i][y] != 0:
-#             if tempFalse2 != True:
-#                 lineCount+=1
-#                 tempFalse2=True
-#     if maskCount == 1 and lineCount == 1:
-#         return True
-    
-#     maskCount = 0
-#     lineCount = 0
-#     tempFalse = False
-#     tempFalse2 = False
-#     for i in range(y+1,min(y+workerRange,len(mask[0])-1)):
-#         if mask[x][i] != 0:
-#             if tempFalse!= True:
-#                 maskCount+=1 
-#                 tempFalse=True  
-#         elif lineImage[x][i] != 0:
-#             if tempFalse2 != True:
-#                 lineCount+=1
-#                 tempFalse2=True
-
-#     tempFalse = False
-#     tempFalse2 = False
-#     for i in range(y-1,max(y-workerRange,-1),-1):
-#         if mask[x][i] != 0:
-#             if tempFalse!= True:
-#                 maskCount+=1 
-#                 tempFalse=True
-                
-#         elif lineImage[x][i] != 0:
-#             if tempFalse2 != True:
-#                 lineCount+=1
-#                 tempFalse2=True
-#     if maskCount == 1 and lineCount == 1:
-#         return True
-#     return False
 
 def fillSmallSpace(mask,lineImage, workerRange,x,y):
     maskCount = 0
     lineCount = 0
     tempFalse = False
-    tempFalse2 = False
     for i in range(x+1,min(x+workerRange,len(mask))):
         if mask[i][y] != 0:
             if tempFalse!= True:
-                maskCount+=1 
+                maskCount+=1
                 tempFalse=True
                 break
         elif lineImage[i][y] != 0:
-            if tempFalse2 != True:
+            if tempFalse != True:
                 lineCount+=1
-                tempFalse2=True
+                tempFalse=True
                 break
-
     tempFalse = False
-    tempFalse2 = False
     for i in range(x-1,max(x-workerRange,-1),-1):
         if mask[i][y] != 0:
             if tempFalse!= True:
-                maskCount+=1 
+                maskCount+=1
                 tempFalse=True
                 break
         elif lineImage[i][y] != 0:
-            if tempFalse2 != True:
+            if tempFalse != True:
                 lineCount+=1
-                tempFalse2=True
-                break
-    if maskCount == 1 and lineCount == 1:
-        return True
+                tempFalse=True
+                break    
     
-    maskCount = 0
-    lineCount = 0
-    tempFalse = False
     tempFalse = False
     for i in range(y+1,min(y+workerRange,len(mask[0])-1)):
         if mask[x][i] != 0:
             if tempFalse!= True:
-                maskCount+=1 
+                maskCount+=1
                 tempFalse=True  
                 break
         elif lineImage[x][i] != 0:
-            if tempFalse2 != True:
+            if tempFalse != True:
                 lineCount+=1
-                tempFalse2=True
+                tempFalse=True
                 break
 
     tempFalse = False
-    tempFalse2 = False
     for i in range(y-1,max(y-workerRange,-1),-1):
         if mask[x][i] != 0:
             if tempFalse!= True:
-                maskCount+=1 
+                maskCount+=1
                 tempFalse=True
-                break
-                
+                break      
         elif lineImage[x][i] != 0:
-            if tempFalse2 != True:
-                lineCount+=1
-                tempFalse2=True
-                break
-    if maskCount == 1 and lineCount == 1:
-        return True
-    
-    maskCount = 0
-    lineCount = 0
-    tempFalse = False
-    tempFalse2 = False
-    for i in range(1,min(min(workerRange+x,len(mask[0])+workerRange),min(workerRange+y,len(mask)+workerRange))):
-        if mask[y+i][x+i] != 0:
             if tempFalse != True:
-                maskCount+=1
+                lineCount+=1
                 tempFalse=True
                 break
-        elif lineImage[y+i][x+i] != 0:
-            if tempFalse2 != True:
-                lineCount+=1
-                tempFalse2=True
-                break
-    tempFalse = False
-    tempFalse2 = False     
-    for i in range(-1,max(y-workerRange,x-workerRange),-1):
-        if mask[y-i][x-i] != 0:
-            if tempFalse != True:
-                maskCount+=1
-                tempFalse=True
-                break
-        elif lineImage[y-i][x-i] != 0:
-            if tempFalse2 != True:
-                lineCount+=1
-                tempFalse2=True
-                break
-    
-    return False
+
+    return lineCount,maskCount
+
+
 
 
 def run_algorithm(img, numb):
@@ -227,7 +135,8 @@ def run_algorithm(img, numb):
     # Detect objects inside input image
     blob = cv2.dnn.blobFromImage(img, swapRB=True)
     net.setInput(blob)
-    boxes, masks = net.forward(['detection_out_final', 'detection_masks'])
+    boxes, masks = net.forward(["detection_out_final", "detection_masks"])
+    _, _, boxes2 = net2.detect(img,confThreshold = boxThr)
     detection_count = boxes.shape[2]
     boundingBox = []
     for i in range(detection_count):
@@ -239,8 +148,8 @@ def run_algorithm(img, numb):
         
         #Get box coordinates
         box = boxes[0, 0, i, 3:7] * np.array([W, H, W, H])
-        (x1, y1, x2, y2) = box.astype('int')
-        boundingBox.append([x1,y1,x2,y2])
+        (x1, y1, x2, y2) = box.astype("int")
+        # boundingBox.append([x1,y1,x2,y2])
         roi_Width = x2 - x1
         roi_Height = y2 - y1
         
@@ -253,6 +162,8 @@ def run_algorithm(img, numb):
                 if mask[i][j] != 0:
                     black_image[i+y1][j+x1] = mask[i][j]
 
+    for box in boxes2:
+        boundingBox.append([box[0],box[1],box[2]+box[0],box[3]+box[1]])
     maxX = 0
     maxY = 0
     minX = len(img)*len(img[0])
@@ -266,19 +177,43 @@ def run_algorithm(img, numb):
     ogSlice = img[minY:maxY, minX:maxX]
     maskSlice = black_image[minY:maxY, minX:maxX]
     ogSlice = find_optimal_lines(ogSlice,numb)
-    ogSlice = cv2.dilate(ogSlice,(3,3))
-    cv2.imshow("OG Slice ", ogSlice)
-    cv2.imshow("Mask Slice ", maskSlice)
+    ogSlice = cv2.dilate(ogSlice,(5,5),iterations=1)
+    # cv2.imshow("OG Slice ", ogSlice)
+    newSlice = ogSlice.copy()
+    newSlice.fill(0)
+
+    for b in boundingBox:
+        for i in range(b[0]-minX,(b[2])-minX):
+            for j in range(b[1]-minY,(b[3])-minY):
+                newSlice[j][i] = ogSlice[j][i]
+    # for i in range(len(ogSlice)):
+    #     for j in range(len(ogSlice[0])):
+    #         if ogSlice[i][j] != 0:
+    #             maskSlice[i][j] = 255
+    # cv2.imshow("Mask Slice ", maskSlice)
+    ogSlice = newSlice
+    # cv2.imshow("OG Slice ", ogSlice)
     cpSlice = maskSlice.copy()#
     workerRange = int(max(len(ogSlice)/10,len(ogSlice[0])/10))
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
                 workVal = fillSmallSpace(maskSlice,ogSlice,workerRange,i,j)
-                if workVal == True:
+                if workVal[0] >= 2 and workVal[1] >= 1 :
                     cpSlice[i][j] = 255
-                
-    imshow("fillsmall",cpSlice)
+                # elif workVal[0] > 3:
+                #     cpSlice[i][j] = 255
+    cpSlice = cv2.bitwise_or(maskSlice,ogSlice)
+    maskSlice = cpSlice.copy()
+    # imshow("Cp Slice",maskSlice)
+    for i in range(len(ogSlice)):
+        for j in range(len(ogSlice[0])):
+            if maskSlice[i][j] != 255:
+                workVal = fillSmallSpace(maskSlice,ogSlice,workerRange,i,j)
+                if workVal[0] > 3 or workVal[1] > 3 :
+                    maskSlice[i][j] = 255
+    cpSlice = maskSlice.copy()
+    imshow("Cp Slice ",cpSlice)
     black_image_lines = black_image.copy()
     # black_image_lines.fill(0)
     for i in range(len(cpSlice)):
@@ -300,13 +235,15 @@ def run_algorithm(img, numb):
 
     cv2.imshow("Image", img)
     # cv2.imshow("Black image", black_image)
-    cv2.imshow("Black image lines", black_image_lines)
+    # cv2.imshow("Black image lines", black_image_lines)
     cv2.waitKey(0)
             
 
-for i in range(2,3):
+for i in range(1,3):
+    if i == 3:
+        continue
     mask = cv2.imread("train_data\\"+str(i)+".jpg")
-    if __name__ == '__main__':
+    if __name__ == "__main__":
         p1 = Process(target=run_algorithm,args=[mask,i])
         p1.start()
 
