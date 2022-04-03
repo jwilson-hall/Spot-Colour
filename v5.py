@@ -166,7 +166,7 @@ def smoothing(mask,lineImage, workerRange,x,y):
                 break
 
     return lineCount,maskCount
-
+#https://stackoverflow.com/questions/46441893/connected-component-labeling-in-python
 def imshow_components(labels):
     # Map component labels to hue val
     label_hue = np.uint8(179*labels/np.max(labels))
@@ -182,7 +182,19 @@ def imshow_components(labels):
     cv2.imshow('labeled.png', labeled_img)
     # cv2.waitKey()
 
+def return_components(labels):
+    # Map component labels to hue val
+    label_hue = np.uint8(179*labels/np.max(labels))
+    blank_ch = 255*np.ones_like(label_hue)
+    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
 
+    # cvt to BGR for display
+    labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
+
+    # set bg label to black
+    labeled_img[label_hue==0] = 0
+
+    return labeled_img
 
 def run_algorithm(img, numb):
         
@@ -243,27 +255,26 @@ def run_algorithm(img, numb):
         for i in range(b[0]-minX,(b[2])-minX):
             for j in range(b[1]-minY,(b[3])-minY):
                 newSlice[j][i] = ogSlice[j][i]
-    # for i in range(len(ogSlice)):
-    #     for j in range(len(ogSlice[0])):
-    #         if ogSlice[i][j] != 0:
-    #             maskSlice[i][j] = 255
-    # cv2.imshow("Mask Slice ", maskSlice)
+    
     ogSlice = newSlice
     # cv2.imshow("OG Slice ", ogSlice)
     cpSlice = maskSlice.copy()#
     
-    workerRange = int(max(len(ogSlice)/20,len(ogSlice[0])/20))
+    workerRange = int(max(len(ogSlice)/10,len(ogSlice[0])/10))
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
                 workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
-                if workVal[0] >= 2 and workVal[1] >= 1 :
+                if workVal[0] >= 2 and workVal[1] >= 2 :
                     cpSlice[i][j] = 255
                 # elif workVal[0] > 3:
                 #     cpSlice[i][j] = 255
     # ogSlice = cpSlice.copy()
-    cpSlice2 = cv2.bitwise_or(maskSlice,ogSlice)
+    cpSlice2 = cpSlice.copy()
+    cpSlice = cv2.bitwise_or(maskSlice,ogSlice)
     cpSlice = cv2.bitwise_or(cpSlice2,cpSlice)
+    # cpSlice = cpSlice2
+    smallWorkerRange = int(max(len(ogSlice)/100,len(ogSlice[0])/100))
     for i in range(len(cpSlice)):
         for j in range(len(cpSlice[0])):
             if maskSlice[i][j] != 255:
@@ -271,22 +282,48 @@ def run_algorithm(img, numb):
                 if workVal == 2:
                     cpSlice[i][j] = 255
 
-    # numLabels,imgLabels = cv2.connectedComponents(cpSlice)
-    # imshow_components(imgLabels)  
+    nb_components, output, stats, centroids = cv2.connectedComponentsWithStats(cpSlice)
+    # imshow_components(output)
 
+    sizes = stats[1:, -1]
+    nb_components = nb_components - 1
+    biggestObject = max(sizes)/2
+    print("AverageSize ",biggestObject)
+    min_size = 150
+
+    img2 = np.zeros((output.shape))
+    for i in range(0, nb_components):
+        if sizes[i] >= biggestObject:
+            img2[output == i + 1] = 255
+    # imshow("img2",img2)
+    cpSlice = img2.copy()
+    # cv2.waitKey(0)
+
+
+    # print(len(imgLabels))
+    # avgSize = 0
+    # print(imgLabels.shape)
+    # print(type(imgLabels))
+    # for item in imgLabels:
+    #     avgSize += np.nonzero(item)
+    # avgSize = avgSize/len(imgLabels)
+    # print(avgSize)
+    # for item in imgLabels:
+    #     if np.nonzero(item) < avgSize:
+    #         imgLabels.remove(item)
+    
     maskSlice = cpSlice.copy()
     # imshow("Cp Slice",maskSlice)
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
-                workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
+                workVal = smoothing(maskSlice,cpSlice,workerRange,i,j)
                 if workVal[0] > 3 or workVal[1] > 3 :
                     maskSlice[i][j] = 255
     cpSlice = maskSlice.copy()
     # imshow("Cp Slice ",cpSlice)
 
-    numLabels,imgLabels = cv2.connectedComponents(cpSlice)
-    imshow_components(imgLabels) 
+     
 
     black_image_lines = black_image.copy()
     # black_image_lines.fill(0)
@@ -307,17 +344,34 @@ def run_algorithm(img, numb):
             if black_image[i][j] != 255:
                 img[i][j] = grey[i][j]
 
+    print("Done with Image: ",numb)
     # cv2.imshow("Image", img)
     # cv2.imshow("Black image", black_image)
     # cv2.imshow("Black image lines", black_image_lines)
-    cv2.waitKey(0)
-            
 
-for i in range(1,6):
-    if i == 3:
-        continue
-    mask = cv2.imread("train_data\\"+str(i)+".jpg")
+    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
+
+    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
+
+    # cv2.waitKey(0)
+            
+data_path = os.getcwd()+"\\"
+
+for i in range(1,11):
+    # if i == 3:
+    #     continue
+    mask = cv2.imread("test_data\\"+str(i)+".jpg")
     if __name__ == "__main__":
         p1 = Process(target=run_algorithm,args=[mask,i])
         p1.start()
+
+# for i in range(1,11):
+#     # if i == 3:
+#     #     continue
+#     mask = cv2.imread("train_data\\"+str(i)+".jpg")
+#     if __name__ == "__main__":
+#         p1 = Process(target=run_algorithm,args=[mask,i])
+#         p1.start()
 

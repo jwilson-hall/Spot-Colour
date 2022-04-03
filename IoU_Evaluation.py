@@ -13,13 +13,20 @@ def calc_IoU(mask1, mask2):   # From the question.
 
 
 data_path = os.getcwd()+"\\"
-ground_truth_path = data_path+"Ground_Truth\\test\\"
+# ground_truth_path = data_path+"Ground_Truth\\test\\"
+ground_truth_path = data_path+"Ground_Truth\\train\\"
 
-train_data_path1 = data_path+"test_output\\v1\\"
-train_data_path2 = data_path+"test_output\\v2\\"
-train_data_path3 = data_path+"test_output\\v3\\"
-train_data_path4 = data_path+"test_output\\v4\\"
-train_data_path5 = data_path+"test_output\\v5\\"
+train_data_path1 = data_path+"train_output\\v1\\"
+train_data_path2 = data_path+"train_output\\v2\\"
+train_data_path3 = data_path+"train_output\\v3\\"
+train_data_path4 = data_path+"train_output\\v4\\"
+train_data_path5 = data_path+"train_output\\v5\\"
+
+test_data_path1 = data_path+"train_output\\v1\\"
+test_data_path2 = data_path+"train_output\\v2\\"
+test_data_path3 = data_path+"train_output\\v3\\"
+test_data_path4 = data_path+"train_output\\v4\\"
+test_data_path5 = data_path+"train_output\\v5\\"
 result_img = 1
 
 def findMaxIoU():
@@ -28,7 +35,7 @@ def findMaxIoU():
         IoU_Max = 0
         for i in range(1,6):
             img_A = cv2.imread(ground_truth_path+str(result_img+j)+'_gt'+str(i)+'.jpg')
-            img_B = cv2.imread(train_data_path3+str(result_img+j)+'_thr.jpg')
+            img_B = cv2.imread(train_data_path5+str(result_img+j)+'_thr.jpg')
             # img_C = cv2.imread(ground_truth_path+'1_gt1.jpg')
             IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
             print(calc_IoU(img_A,img_B))
