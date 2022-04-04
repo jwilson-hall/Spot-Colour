@@ -303,12 +303,12 @@ def run_algorithm(img, numb):
     
     # imshow("ogSlice",ogSlice)
     # imshow("cpSlice",cpSlice)
-    # waitKey(0)
-    gray = cpSlice.copy()
-    drcontours = gray.copy()
+    # waitKey(0)    
+    rmSlice = cpSlice.copy()
+    drcontours = rmSlice.copy()
     drcontours = cv2.cvtColor(drcontours, cv2.COLOR_GRAY2RGB)
-    removeIslands = cv2.pyrDown(gray)
-    _, threshed = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)
+    removeIslands = cv2.pyrDown(rmSlice)
+    _, threshed = cv2.threshold(rmSlice, 0, 255, cv2.THRESH_BINARY)
     contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     #find maximum contour and draw   
@@ -316,13 +316,12 @@ def run_algorithm(img, numb):
     epsilon = 0.002 * cv2.arcLength(cmax, True)
     approx = cv2.approxPolyDP(cmax, epsilon, True)
     cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)
-    width, height = gray.shape
+    width, height = rmSlice.shape
     # imshow("Contour", drcontours)
     # waitKey(0)
     #fill maximum contour and draw   
     removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
     cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
-    
     cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
     # ogSlice = cpSlice.copy()
     # cpSlice = smoothing(ogSlice,cpSlice,imgRange,iterations=4)
@@ -378,8 +377,8 @@ def run_algorithm(img, numb):
     # cv2.imwrite(data_path+"train_output\\v4\\"+str(numb)+"_thr.jpg",fMask)
     # cv2.imwrite(data_path+"train_output\\v4\\"+str(numb)+"_p.jpg",fOutput)
 
-    cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_thr.jpg",fMask)
-    cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_p.jpg",fOutput)
+    # cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_thr.jpg",fMask)
+    # cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_p.jpg",fOutput)
     # cv2.waitKey(0)
 
 # img = cv2.imread(data_path+"test_data\\"+'6.jpg')
@@ -392,7 +391,7 @@ data_path = os.getcwd()+"\\"
 #         p1 = Process(target=run_algorithm,args=[img,i])
 #         p1.start()
 
-for i in range(1,11):
+for i in range(6,7):
     # if i != 3:
     #     if i != 7:
     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
