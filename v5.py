@@ -289,28 +289,14 @@ def run_algorithm(img, numb):
     nb_components = nb_components - 1
     biggestObject = max(sizes)/2
     print("AverageSize ",biggestObject)
-    min_size = 150
 
-    img2 = np.zeros((output.shape))
+    img2 = output.copy()
+    img2.fill(0)
     for i in range(0, nb_components):
         if sizes[i] >= biggestObject:
             img2[output == i + 1] = 255
-    # imshow("img2",img2)
-    cpSlice = img2.copy()
+    # cpSlice = img2.copy()
     # cv2.waitKey(0)
-
-
-    # print(len(imgLabels))
-    # avgSize = 0
-    # print(imgLabels.shape)
-    # print(type(imgLabels))
-    # for item in imgLabels:
-    #     avgSize += np.nonzero(item)
-    # avgSize = avgSize/len(imgLabels)
-    # print(avgSize)
-    # for item in imgLabels:
-    #     if np.nonzero(item) < avgSize:
-    #         imgLabels.remove(item)
     
     maskSlice = cpSlice.copy()
     # imshow("Cp Slice",maskSlice)
@@ -321,10 +307,30 @@ def run_algorithm(img, numb):
                 if workVal[0] > 3 or workVal[1] > 3 :
                     maskSlice[i][j] = 255
     cpSlice = maskSlice.copy()
-    # imshow("Cp Slice ",cpSlice)
 
-     
+    imshow("Before",cpSlice)
+    rmSlice = cpSlice.copy()
+    drcontours = rmSlice.copy()
+    drcontours = cv2.cvtColor(drcontours, cv2.COLOR_GRAY2RGB)
+    removeIslands = cv2.pyrDown(rmSlice)
+    _, threshed = cv2.threshold(rmSlice, 0, 255, cv2.THRESH_BINARY)
+    contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+    #find maximum contour and draw   
+    cmax = max(contours, key = cv2.contourArea) 
+    epsilon = 0.002 * cv2.arcLength(cmax, True)
+    approx = cv2.approxPolyDP(cmax, epsilon, True)
+    cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)
+    width, height = rmSlice.shape
+    # imshow("Contour", drcontours)
+    # waitKey(0)
+    #fill maximum contour and draw   
+    removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
+    cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
+    cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
+
+    imshow("After",cpSlice)
+    # waitKey(0)
     black_image_lines = black_image.copy()
     # black_image_lines.fill(0)
     for i in range(len(cpSlice)):
@@ -345,33 +351,33 @@ def run_algorithm(img, numb):
                 img[i][j] = grey[i][j]
 
     print("Done with Image: ",numb)
-    # cv2.imshow("Image", img)
-    # cv2.imshow("Black image", black_image)
+    cv2.imshow("Image", img)
+    cv2.imshow("Black image", black_image)
     # cv2.imshow("Black image lines", black_image_lines)
 
-    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
+    # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
 
     # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
     # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
 
-    # cv2.waitKey(0)
+    cv2.waitKey(0)
             
 data_path = os.getcwd()+"\\"
 
-for i in range(1,11):
-    # if i == 3:
-    #     continue
-    mask = cv2.imread("test_data\\"+str(i)+".jpg")
-    if __name__ == "__main__":
-        p1 = Process(target=run_algorithm,args=[mask,i])
-        p1.start()
-
-# for i in range(1,11):
+# for i in range(1,3):
 #     # if i == 3:
 #     #     continue
-#     mask = cv2.imread("train_data\\"+str(i)+".jpg")
+#     mask = cv2.imread("test_data\\"+str(i)+".jpg")
 #     if __name__ == "__main__":
 #         p1 = Process(target=run_algorithm,args=[mask,i])
 #         p1.start()
+
+for i in range(6,7):
+    # if i == 3:
+    #     continue
+    mask = cv2.imread("train_data\\"+str(i)+".jpg")
+    if __name__ == "__main__":
+        p1 = Process(target=run_algorithm,args=[mask,i])
+        p1.start()
 

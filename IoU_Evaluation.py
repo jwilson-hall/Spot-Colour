@@ -22,11 +22,11 @@ train_data_path3 = data_path+"train_output\\v3\\"
 train_data_path4 = data_path+"train_output\\v4\\"
 train_data_path5 = data_path+"train_output\\v5\\"
 
-test_data_path1 = data_path+"train_output\\v1\\"
-test_data_path2 = data_path+"train_output\\v2\\"
-test_data_path3 = data_path+"train_output\\v3\\"
-test_data_path4 = data_path+"train_output\\v4\\"
-test_data_path5 = data_path+"train_output\\v5\\"
+test_data_path1 = data_path+"test_output\\v1\\"
+test_data_path2 = data_path+"test_output\\v2\\"
+test_data_path3 = data_path+"test_output\\v3\\"
+test_data_path4 = data_path+"test_output\\v4\\"
+test_data_path5 = data_path+"test_output\\v5\\"
 result_img = 1
 
 def findMaxIoU():
