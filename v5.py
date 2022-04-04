@@ -288,16 +288,16 @@ def run_algorithm(img, numb):
     sizes = stats[1:, -1]
     nb_components = nb_components - 1
     biggestObject = max(sizes)/2
-    print("AverageSize ",biggestObject)
-
+    
     img2 = output.copy()
     img2.fill(0)
     for i in range(0, nb_components):
         if sizes[i] >= biggestObject:
             img2[output == i + 1] = 255
-    # cpSlice = img2.copy()
-    # cv2.waitKey(0)
     
+    for i in range(len(ogSlice)):
+        for j in range(len(ogSlice[0])):
+            cpSlice[i][j] = img2[i][j]
     maskSlice = cpSlice.copy()
     # imshow("Cp Slice",maskSlice)
     for i in range(len(ogSlice)):
@@ -353,29 +353,29 @@ def run_algorithm(img, numb):
     # cv2.imshow("Black image", black_image)
     # cv2.imshow("Black image lines", black_image_lines)
 
-    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-    cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
+    # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
 
-    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
+    cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
 
     # cv2.waitKey(0)
             
 data_path = os.getcwd()+"\\"
 
-for i in range(1,11):
-    # if i == 3:
-    #     continue
-    mask = cv2.imread("test_data\\"+str(i)+".jpg")
-    if __name__ == "__main__":
-        p1 = Process(target=run_algorithm,args=[mask,i])
-        p1.start()
-
 # for i in range(1,11):
 #     # if i == 3:
 #     #     continue
-#     mask = cv2.imread("train_data\\"+str(i)+".jpg")
+#     mask = cv2.imread("test_data\\"+str(i)+".jpg")
 #     if __name__ == "__main__":
 #         p1 = Process(target=run_algorithm,args=[mask,i])
 #         p1.start()
+
+for i in range(1,11):
+    # if i == 3:
+    #     continue
+    mask = cv2.imread("train_data\\"+str(i)+".jpg")
+    if __name__ == "__main__":
+        p1 = Process(target=run_algorithm,args=[mask,i])
+        p1.start()
 
