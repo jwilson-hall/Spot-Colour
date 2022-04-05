@@ -21,22 +21,27 @@ def static_saliency(img, numb):
     output_img = cv2.cvtColor(output_img,cv2.COLOR_GRAY2RGB)#converting the greyscale image back to rgb values so that we can set the greyscale value to the RGB tuple
     
     
+    for i in range(len(threshMap)):
+        for j in range(len(threshMap[0])):
+            if (threshMap[i][j]==0):
+                img[i][j] = output_img[i][j]
+
     # cv2.imwrite(data_path+"train_output\\v1\\"+str(numb)+"_p.jpg",img)
     # cv2.imwrite(data_path+"train_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
-    cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_p.jpg",img)
-    cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
-    # cv2.imshow("Output image",img)
-    # cv2.imshow("Output", threshMap)
-    # cv2.waitKey(0)
+    # cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_p.jpg",img)
+    # cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
+    cv2.imshow("Output image",img)
+    cv2.imshow("Output", threshMap)
+    cv2.waitKey(0)
 
 data_path = os.getcwd()+"\\"
 files = os.listdir(data_path)
 # img = cv2.imread(data_path+"test_data\\"+str(1)+'.jpg')
 # static_saliency(img,1)
 #runnning test and train images
-# for i in range(1,11):
-#     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
-#     static_saliency(img,i)
-for i in range(1,11):
-    img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+for i in range(1,2):
+    img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     static_saliency(img,i)
+# for i in range(1,11):
+#     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+#     static_saliency(img,i)
