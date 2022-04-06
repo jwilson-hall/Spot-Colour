@@ -10,11 +10,12 @@ from cv2 import INTER_AREA, INTER_BITS, INTER_CUBIC, INTER_LANCZOS4, INTER_LINEA
 import numpy as np
 import cv2
 import os
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 
 data_path = os.getcwd()
 dataset_path = data_path+"\\cross_validation\\"
-dataLocation = dataset_path+"\\images\\"
+imageDataLocation = dataset_path+"\\images\\"
+truthDataLocation = dataset_path+"\\truth\\"
 log = []
 datasetTrain = []
 datasetVal = []
@@ -45,12 +46,27 @@ def saveLog():
     log.clear()
 
 def addToLog(line,varname):
-    if isinstance(line, list):
+    print("Line",line)
+    if varname == "BinaryMasks":
+        log.append(varname,line)
+    elif isinstance(line, list):
         # log.append(varname)
         log.append(str(varname+" "+f'{line}'.split('=')[0]))
-    if isinstance(line, str or int):
+    elif isinstance(line, str or int):
         # log.append(varname)
         log.append(str(varname+" "+line))
+
+def calc_IoU(mask1, mask2):   # From the question.
+    mask1_area = np.count_nonzero(mask1)
+    mask2_area = np.count_nonzero(mask2)
+    # print(mask1_area, " : ", mask2_area)
+    intersection = np.count_nonzero(np.logical_and( mask1,  mask2))
+    # print("intersection",intersection)
+    iou = intersection/(mask1_area+mask2_area-intersection)
+    return iou
+
+
+
 
 # def runTest():
 def atoi(text):
@@ -62,7 +78,7 @@ def natural_keys(text):
 def select_new_dataset():
     datasetTrain.clear()
     datasetVal.clear()
-    files = os.listdir(dataLocation)
+    files = os.listdir(imageDataLocation)
     for i in range(14):
         file = random.choice(files) 
         while file in datasetTrain:
@@ -71,14 +87,14 @@ def select_new_dataset():
     for file in files:
         if file not in datasetTrain:
             datasetVal.append(file)
-    datasetTrain.sort(key=natural_keys)
-    datasetVal.sort(key=natural_keys)
+    # datasetTrain.sort(key=natural_keys)
+    # datasetVal.sort(key=natural_keys)
+
 #Region v1
 #parameters that will be adjusted include: 
 # - thresholding method
 # - 
 # -   
-# def rV1():
 PARAMETERS.clear()
 for i in range(2):
     PARAMETERS.append(None)
@@ -90,7 +106,7 @@ def selectParameters():#selecting the parameters that will be swapped for each i
     PARAMETERS[0] = random.choice(listOfMethods)
     PARAMETERS[1] = random.choice(listOfTypes)
 
-def v1(img,numb,PARAMETERS,listOfBinaryMask):
+def v1(img,numb,PARAMETERS,dictOfBinaryMask):
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()# calculating the static saliency fine grained map
     (success, saliencyMap) = saliency.computeSaliency(img)
     newSaliencyMap=saliencyMap*255#opencv returns a floating point number when computing saliency so multiplying by 255 sets it to be within the limits of 0-255
@@ -98,24 +114,41 @@ def v1(img,numb,PARAMETERS,listOfBinaryMask):
     threshMap = cv2.threshold(newSaliencyMap.astype("uint8"), 0, 255, PARAMETERS[0] | PARAMETERS[1])[1]#thresholding saliency map using otsu's algorithm to get a binary mask that is used when choosing areas that should be in colour
     threshMap = cv2.threshold(threshMap.astype("uint8"), 80, 255, cv2.THRESH_BINARY)[1]
     # print(threshMap)
-    listOfBinaryMask.append([threshMap,numb])
+    dictOfBinaryMask[numb] = threshMap
 
-def runTest():
-    listOfBinaryMask = []
-    for i in range(1):
-        selectParameters()
-        addToLog(PARAMETERS,"Parameters")
-        jobs = []
-        for image in datasetTrain:
-            current = imread(dataLocation+image)
-            p1 = Process(target=v1,args=[current,image,PARAMETERS,listOfBinaryMask])
-            p1.start()
-            # imshow(image,current)
-            # waitKey(0)
+def runTestV1():
+    # listOfBinaryMask = []
+    averageIOU = 0
+    with Manager() as manager:
+        dictOfBinaryMask = manager.dict()
+        # listOfBinaryMask.fromkeys(datasetTrain)
+        for i in range(1):
+            selectParameters()
+            addToLog(PARAMETERS,"Parameters")
+            jobs = []
+            for image in datasetTrain:
+                current = imread(imageDataLocation+image)
+                p1 = Process(target=v1,args=[current,image,PARAMETERS,dictOfBinaryMask])
+                p1.start()
+                jobs.append(p1)
+                # imshow(image,current)
+                # waitKey(0)                                      
+            for job in jobs:
+                job.join()
         
-
-    print("print statemet",listOfBinaryMask)
-    addToLog(listOfBinaryMask,"Binary Masks")
+        for image in datasetTrain:
+            imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
+            max_IoU = 0
+            for i in range (1,6):
+                mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
+                mask2 = imread(truthDataLocation+mask2)
+                mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
+                max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
+            averageIOU+=max_IoU
+        averageIOU /= len(datasetTrain)
+        print(averageIOU)
+        # print("print statemet",dictOfBinaryMask)
+        # addToLog(listOfBinaryMask,"BinaryMasks")
 
 #EndRegion
 #Region v2
@@ -123,7 +156,7 @@ def runTest():
 # - confidence threshold value
 # - saliency type
 # - image thresholding method
-def rV2(img,numb):
+def rV2():
     def v2(img, numb):
         thres = 0.45 # Threshold to detect object
 
@@ -921,7 +954,7 @@ if __name__ == "__main__":
     select_new_dataset()
     addToLog(datasetTrain,f'{datasetTrain=}'.split('=')[0])
     addToLog(datasetVal,f'{datasetVal=}'.split('=')[0])
-    runTest()
+    runTestV1()
     saveLog()
     print("Run time number ",runTimeNumber)
 
