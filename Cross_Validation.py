@@ -16,7 +16,7 @@ data_path = os.getcwd()
 dataset_path = data_path+"\\cross_validation\\"
 imageDataLocation = dataset_path+"\\images\\"
 truthDataLocation = dataset_path+"\\truth\\"
-log = []
+LOG = []
 datasetTrain = []
 datasetVal = []
 PARAMETERS = []
@@ -35,26 +35,28 @@ def saveLog():
     fileList = os.listdir(data_path)
     if "log1.txt" not in fileList:
         with open("log"+str(i)+".txt","a") as f:
-            for line in log:
+            for line in LOG:
                 f.write(line+"\n")
     else:
         while "log"+str(i)+".txt" in fileList:
             i+=1
         with open("log"+str(i)+".txt","a") as f:
-            for line in log:
+            for line in LOG:
                 f.write(line+"\n")
-    log.clear()
+    LOG.clear()
 
 def addToLog(line,varname):
-    print("Line",line)
+    # print("Line",line)
     if varname == "BinaryMasks":
-        log.append(varname,line)
+        LOG.append(varname,line)
     elif isinstance(line, list):
         # log.append(varname)
-        log.append(str(varname+" "+f'{line}'.split('=')[0]))
+        LOG.append(str(varname+" "+f'{line}'.split('=')[0]))
     elif isinstance(line, str or int):
         # log.append(varname)
-        log.append(str(varname+" "+line))
+        LOG.append(str(varname)+" "+str(line))
+    elif isinstance(line, float):
+        LOG.append(str(varname)+" "+str(line))
 
 def calc_IoU(mask1, mask2):   # From the question.
     mask1_area = np.count_nonzero(mask1)
@@ -93,62 +95,106 @@ def select_new_dataset():
 #Region v1
 #parameters that will be adjusted include: 
 # - thresholding method
-# - 
+# - saliency type
 # -   
-PARAMETERS.clear()
-for i in range(2):
-    PARAMETERS.append(None)
 #thresholding types need to be defined here
 listOfMethods = [cv2.THRESH_OTSU,cv2.THRESH_TRIANGLE]
 listOfTypes = [cv2.THRESH_BINARY,cv2.THRESH_TOZERO]
-
+# saliencyType = [int(1),int(2)]
+#[cv2.saliency.StaticSaliencyFineGrained_create(),cv2.saliency.StaticSaliencySpectralResidual_create()]
 def selectParameters():#selecting the parameters that will be swapped for each iteration
-    PARAMETERS[0] = random.choice(listOfMethods)
-    PARAMETERS[1] = random.choice(listOfTypes)
+    PARAMETERS.clear()
+    PARAMETERS.append(random.choice(listOfMethods))
+    PARAMETERS.append(random.choice(listOfTypes))
+    # PARAMETERS.append(random.choice(saliencyType))
 
 def v1(img,numb,PARAMETERS,dictOfBinaryMask):
+    # if int(PARAMETERS[2]) == 1:
+    #     saliency = cv2.saliency.StaticSaliencyFineGrained_create()# calculating the static saliency fine grained map
+    # elif int(PARAMETERS[2]) == 2:
+    #     saliency = cv2.saliency.StaticSaliencySpectralResidual_create()# calculating the static saliency residual map
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()# calculating the static saliency fine grained map
     (success, saliencyMap) = saliency.computeSaliency(img)
     newSaliencyMap=saliencyMap*255#opencv returns a floating point number when computing saliency so multiplying by 255 sets it to be within the limits of 0-255
 
     threshMap = cv2.threshold(newSaliencyMap.astype("uint8"), 0, 255, PARAMETERS[0] | PARAMETERS[1])[1]#thresholding saliency map using otsu's algorithm to get a binary mask that is used when choosing areas that should be in colour
     threshMap = cv2.threshold(threshMap.astype("uint8"), 80, 255, cv2.THRESH_BINARY)[1]
-    # print(threshMap)
+
     dictOfBinaryMask[numb] = threshMap
 
 def runTestV1():
-    # listOfBinaryMask = []
-    averageIOU = 0
-    with Manager() as manager:
-        dictOfBinaryMask = manager.dict()
-        # listOfBinaryMask.fromkeys(datasetTrain)
-        for i in range(1):
-            selectParameters()
-            addToLog(PARAMETERS,"Parameters")
-            jobs = []
-            for image in datasetTrain:
+    listTestEvaluations = []
+    for i in range(100):
+        addToLog(i,"Loop: ")
+        select_new_dataset()
+        addToLog(datasetTrain,f'{datasetTrain=}'.split('=')[0])
+        addToLog(datasetVal,f'{datasetVal=}'.split('=')[0])
+        # listOfBinaryMask = []
+        # for i in range(10):
+        listOfEvaluations = []
+        evaluationParameters = []
+        averageIOU = 0
+        optimalParams = []
+        with Manager() as manager:
+            dictOfBinaryMask = manager.dict()
+            # listOfBinaryMask.fromkeys(datasetTrain)
+            for i in range(1000):#Only runs for the maximum number of combinations
+                selectParameters()
+                if PARAMETERS in evaluationParameters:
+                    continue
+                evaluationParameters.append(PARAMETERS.copy())#[PARAMETERS[0],PARAMETERS[1],PARAMETERS[2]]
+                # print(evaluationParameters)
+                # addToLog(PARAMETERS.copy(),"Parameters")
+                jobs = []
+                for image in datasetTrain:
+                    current = imread(imageDataLocation+image)
+                    p1 = Process(target=v1,args=[current,image,PARAMETERS,dictOfBinaryMask])
+                    p1.start()
+                    jobs.append(p1)                                    
+                for job in jobs:
+                    job.join()
+                averageIOU=0
+                for image in datasetTrain:
+                    imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
+                    max_IoU = 0
+                    for i in range (1,6):
+                        mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
+                        mask2 = imread(truthDataLocation+mask2)
+                        mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
+                        max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
+                    averageIOU+=max_IoU
+                averageIOU /= len(datasetTrain)
+                # print(averageIOU)
+                listOfEvaluations.append(averageIOU)
+            optimalParamsResults = listOfEvaluations[listOfEvaluations.index(max(listOfEvaluations))]
+            optimalParams = evaluationParameters[listOfEvaluations.index(max(listOfEvaluations))]
+            addToLog(optimalParamsResults,"Evaluation Score Train Set")
+            # dictOfBinaryMask.clear()
+            jobs.clear()
+            for image in datasetVal:
                 current = imread(imageDataLocation+image)
-                p1 = Process(target=v1,args=[current,image,PARAMETERS,dictOfBinaryMask])
+                p1 = Process(target=v1,args=[current,image,optimalParams,dictOfBinaryMask])
                 p1.start()
                 jobs.append(p1)
-                # imshow(image,current)
-                # waitKey(0)                                      
             for job in jobs:
                 job.join()
+            averageIOU=0
+            for image in datasetVal:
+                imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
+                max_IoU = 0
+                for i in range (1,6):
+                    mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
+                    mask2 = imread(truthDataLocation+mask2)
+                    mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
+                    max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
+                averageIOU+=max_IoU
+            averageIOU /= len(datasetVal)
+            addToLog(optimalParams,"Optimal Parameters")
+            addToLog(averageIOU,"Evaluation Score Validation Set")
+            listTestEvaluations.append(averageIOU)
+            # print(LOG)
+    addToLog(sum(listOfEvaluations)/len(listOfEvaluations),"Average Validation Score")
         
-        for image in datasetTrain:
-            imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
-            max_IoU = 0
-            for i in range (1,6):
-                mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
-                mask2 = imread(truthDataLocation+mask2)
-                mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
-                max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
-            averageIOU+=max_IoU
-        averageIOU /= len(datasetTrain)
-        print(averageIOU)
-        # print("print statemet",dictOfBinaryMask)
-        # addToLog(listOfBinaryMask,"BinaryMasks")
 
 #EndRegion
 #Region v2
@@ -950,10 +996,7 @@ def rV5(img,numb):
 
 
 if __name__ == "__main__":
-    runTimeNumber = str(runTimeCount())
-    select_new_dataset()
-    addToLog(datasetTrain,f'{datasetTrain=}'.split('=')[0])
-    addToLog(datasetVal,f'{datasetVal=}'.split('=')[0])
+    runTimeNumber = str(runTimeCount())    
     runTestV1()
     saveLog()
     print("Run time number ",runTimeNumber)
