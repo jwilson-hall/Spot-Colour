@@ -1,0 +1,253 @@
+datasetTrain ['13.jpg', '11.jpg', '6.jpg', '10.jpg', '2.jpg', '8.jpg', '4.jpg', '20.jpg', '1.jpg', '12.jpg', '7.jpg', '16.jpg', '18.jpg', '15.jpg']
+datasetVal ['14.jpg', '17.jpg', '19.jpg', '3.jpg', '5.jpg', '9.jpg']
+Evaluation Score Train Set 0.7185497292914446
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7896990126210727
+datasetTrain ['17.jpg', '14.jpg', '2.jpg', '15.jpg', '11.jpg', '20.jpg', '10.jpg', '1.jpg', '3.jpg', '18.jpg', '7.jpg', '6.jpg', '16.jpg', '4.jpg']
+datasetVal ['12.jpg', '13.jpg', '19.jpg', '5.jpg', '8.jpg', '9.jpg']
+Evaluation Score Train Set 0.7048105667321238
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.8217570585928206
+datasetTrain ['1.jpg', '16.jpg', '18.jpg', '11.jpg', '7.jpg', '20.jpg', '17.jpg', '2.jpg', '14.jpg', '12.jpg', '10.jpg', '3.jpg', '8.jpg', '5.jpg']
+datasetVal ['13.jpg', '15.jpg', '19.jpg', '4.jpg', '6.jpg', '9.jpg']
+Evaluation Score Train Set 0.6959799972109447
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8423617208089053
+datasetTrain ['12.jpg', '5.jpg', '4.jpg', '8.jpg', '3.jpg', '20.jpg', '15.jpg', '10.jpg', '19.jpg', '14.jpg', '9.jpg', '6.jpg', '2.jpg', '16.jpg']
+datasetVal ['1.jpg', '11.jpg', '13.jpg', '17.jpg', '18.jpg', '7.jpg']
+Evaluation Score Train Set 0.7980817398179372
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6041243213925894
+datasetTrain ['8.jpg', '15.jpg', '9.jpg', '17.jpg', '7.jpg', '19.jpg', '14.jpg', '3.jpg', '1.jpg', '11.jpg', '16.jpg', '18.jpg', '20.jpg', '12.jpg']
+datasetVal ['10.jpg', '13.jpg', '2.jpg', '4.jpg', '5.jpg', '6.jpg']
+Evaluation Score Train Set 0.7005948453834941
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.8315937417396229
+datasetTrain ['10.jpg', '15.jpg', '5.jpg', '7.jpg', '11.jpg', '17.jpg', '16.jpg', '13.jpg', '2.jpg', '12.jpg', '8.jpg', '4.jpg', '1.jpg', '6.jpg']
+datasetVal ['14.jpg', '18.jpg', '19.jpg', '20.jpg', '3.jpg', '9.jpg']
+Evaluation Score Train Set 0.778367615734455
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.650123944254048
+datasetTrain ['12.jpg', '8.jpg', '13.jpg', '14.jpg', '7.jpg', '4.jpg', '15.jpg', '16.jpg', '17.jpg', '11.jpg', '19.jpg', '3.jpg', '2.jpg', '1.jpg']
+datasetVal ['10.jpg', '18.jpg', '20.jpg', '5.jpg', '6.jpg', '9.jpg']
+Evaluation Score Train Set 0.7667546752465073
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6772208053925923
+datasetTrain ['7.jpg', '13.jpg', '8.jpg', '2.jpg', '14.jpg', '15.jpg', '3.jpg', '18.jpg', '11.jpg', '4.jpg', '9.jpg', '10.jpg', '12.jpg', '6.jpg']
+datasetVal ['1.jpg', '16.jpg', '17.jpg', '19.jpg', '20.jpg', '5.jpg']
+Evaluation Score Train Set 0.7049039452694593
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.821539175339038
+datasetTrain ['1.jpg', '10.jpg', '11.jpg', '17.jpg', '13.jpg', '5.jpg', '3.jpg', '16.jpg', '18.jpg', '15.jpg', '8.jpg', '9.jpg', '7.jpg', '6.jpg']
+datasetVal ['12.jpg', '14.jpg', '19.jpg', '2.jpg', '20.jpg', '4.jpg']
+Evaluation Score Train Set 0.7025586191735256
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.8270116028962166
+datasetTrain ['19.jpg', '14.jpg', '6.jpg', '20.jpg', '3.jpg', '13.jpg', '11.jpg', '1.jpg', '5.jpg', '15.jpg', '4.jpg', '12.jpg', '9.jpg', '10.jpg']
+datasetVal ['16.jpg', '17.jpg', '18.jpg', '2.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.8120557521800649
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.571518292547625
+datasetTrain ['18.jpg', '2.jpg', '9.jpg', '3.jpg', '10.jpg', '4.jpg', '5.jpg', '11.jpg', '12.jpg', '20.jpg', '8.jpg', '6.jpg', '16.jpg', '17.jpg']
+datasetVal ['1.jpg', '13.jpg', '14.jpg', '15.jpg', '19.jpg', '7.jpg']
+Evaluation Score Train Set 0.7268391828100036
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7703569544111012
+datasetTrain ['20.jpg', '2.jpg', '3.jpg', '13.jpg', '17.jpg', '5.jpg', '15.jpg', '19.jpg', '14.jpg', '16.jpg', '18.jpg', '4.jpg', '12.jpg', '9.jpg']
+datasetVal ['1.jpg', '10.jpg', '11.jpg', '6.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.749271393564611
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7180151293170175
+datasetTrain ['1.jpg', '11.jpg', '13.jpg', '10.jpg', '19.jpg', '2.jpg', '4.jpg', '5.jpg', '14.jpg', '8.jpg', '18.jpg', '9.jpg', '3.jpg', '17.jpg']
+datasetVal ['12.jpg', '15.jpg', '16.jpg', '20.jpg', '6.jpg', '7.jpg']
+Evaluation Score Train Set 0.75733879659305
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6991911889173266
+datasetTrain ['4.jpg', '16.jpg', '10.jpg', '3.jpg', '2.jpg', '17.jpg', '15.jpg', '12.jpg', '5.jpg', '1.jpg', '14.jpg', '8.jpg', '6.jpg', '20.jpg']
+datasetVal ['11.jpg', '13.jpg', '18.jpg', '19.jpg', '7.jpg', '9.jpg']
+Evaluation Score Train Set 0.7889914402237473
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.625335020445699
+datasetTrain ['13.jpg', '18.jpg', '5.jpg', '1.jpg', '16.jpg', '4.jpg', '2.jpg', '7.jpg', '3.jpg', '14.jpg', '8.jpg', '9.jpg', '11.jpg', '12.jpg']
+datasetVal ['10.jpg', '15.jpg', '17.jpg', '19.jpg', '20.jpg', '6.jpg']
+Evaluation Score Train Set 0.6988728558989151
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8356117172036409
+datasetTrain ['18.jpg', '3.jpg', '1.jpg', '9.jpg', '16.jpg', '7.jpg', '19.jpg', '5.jpg', '11.jpg', '15.jpg', '17.jpg', '20.jpg', '4.jpg', '8.jpg']
+datasetVal ['10.jpg', '12.jpg', '13.jpg', '14.jpg', '2.jpg', '6.jpg']
+Evaluation Score Train Set 0.7127589041514533
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8032109379477186
+datasetTrain ['14.jpg', '18.jpg', '13.jpg', '16.jpg', '9.jpg', '10.jpg', '4.jpg', '1.jpg', '3.jpg', '11.jpg', '6.jpg', '7.jpg', '15.jpg', '12.jpg']
+datasetVal ['17.jpg', '19.jpg', '2.jpg', '20.jpg', '5.jpg', '8.jpg']
+Evaluation Score Train Set 0.703562179422759
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.824669962314672
+datasetTrain ['17.jpg', '20.jpg', '13.jpg', '5.jpg', '18.jpg', '2.jpg', '16.jpg', '15.jpg', '19.jpg', '3.jpg', '12.jpg', '7.jpg', '1.jpg', '4.jpg']
+datasetVal ['10.jpg', '11.jpg', '14.jpg', '6.jpg', '8.jpg', '9.jpg']
+Evaluation Score Train Set 0.7191746451968047
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7882408755085654
+datasetTrain ['8.jpg', '16.jpg', '10.jpg', '7.jpg', '9.jpg', '5.jpg', '2.jpg', '19.jpg', '18.jpg', '3.jpg', '14.jpg', '6.jpg', '4.jpg', '17.jpg']
+datasetVal ['1.jpg', '11.jpg', '12.jpg', '13.jpg', '15.jpg', '20.jpg']
+Evaluation Score Train Set 0.7009517005303861
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.830761079730209
+datasetTrain ['14.jpg', '9.jpg', '6.jpg', '18.jpg', '10.jpg', '11.jpg', '5.jpg', '19.jpg', '2.jpg', '15.jpg', '1.jpg', '13.jpg', '16.jpg', '17.jpg']
+datasetVal ['12.jpg', '20.jpg', '3.jpg', '4.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.7699022580835332
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.6698764454395322
+datasetTrain ['7.jpg', '6.jpg', '14.jpg', '11.jpg', '4.jpg', '12.jpg', '5.jpg', '1.jpg', '17.jpg', '3.jpg', '20.jpg', '2.jpg', '18.jpg', '15.jpg']
+datasetVal ['10.jpg', '13.jpg', '16.jpg', '19.jpg', '8.jpg', '9.jpg']
+Evaluation Score Train Set 0.7029411728865924
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8261189775657268
+datasetTrain ['18.jpg', '13.jpg', '20.jpg', '4.jpg', '1.jpg', '10.jpg', '12.jpg', '7.jpg', '9.jpg', '11.jpg', '19.jpg', '2.jpg', '8.jpg', '14.jpg']
+datasetVal ['15.jpg', '16.jpg', '17.jpg', '3.jpg', '5.jpg', '6.jpg']
+Evaluation Score Train Set 0.7334281360764532
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7549827301227184
+datasetTrain ['13.jpg', '5.jpg', '6.jpg', '10.jpg', '18.jpg', '19.jpg', '17.jpg', '9.jpg', '14.jpg', '11.jpg', '20.jpg', '4.jpg', '2.jpg', '15.jpg']
+datasetVal ['1.jpg', '12.jpg', '16.jpg', '3.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.7741245667219243
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6600243919499525
+datasetTrain ['10.jpg', '5.jpg', '13.jpg', '11.jpg', '2.jpg', '20.jpg', '1.jpg', '9.jpg', '3.jpg', '8.jpg', '12.jpg', '15.jpg', '7.jpg', '14.jpg']
+datasetVal ['16.jpg', '17.jpg', '18.jpg', '19.jpg', '4.jpg', '6.jpg']
+Evaluation Score Train Set 0.7737124516010656
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.6609859938986232
+datasetTrain ['2.jpg', '13.jpg', '9.jpg', '12.jpg', '8.jpg', '14.jpg', '15.jpg', '10.jpg', '18.jpg', '6.jpg', '19.jpg', '7.jpg', '5.jpg', '20.jpg']
+datasetVal ['1.jpg', '11.jpg', '16.jpg', '17.jpg', '3.jpg', '4.jpg']
+Evaluation Score Train Set 0.7275423027751622
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.768716341159064
+datasetTrain ['5.jpg', '19.jpg', '3.jpg', '11.jpg', '14.jpg', '2.jpg', '8.jpg', '12.jpg', '6.jpg', '9.jpg', '18.jpg', '13.jpg', '1.jpg', '16.jpg']
+datasetVal ['10.jpg', '15.jpg', '17.jpg', '20.jpg', '4.jpg', '7.jpg']
+Evaluation Score Train Set 0.7304656307081648
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7618952426487247
+datasetTrain ['16.jpg', '8.jpg', '1.jpg', '12.jpg', '7.jpg', '6.jpg', '4.jpg', '10.jpg', '18.jpg', '5.jpg', '17.jpg', '2.jpg', '14.jpg', '11.jpg']
+datasetVal ['13.jpg', '15.jpg', '19.jpg', '20.jpg', '3.jpg', '9.jpg']
+Evaluation Score Train Set 0.707164968014574
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.816263455600437
+datasetTrain ['11.jpg', '6.jpg', '3.jpg', '7.jpg', '18.jpg', '17.jpg', '13.jpg', '9.jpg', '20.jpg', '4.jpg', '14.jpg', '5.jpg', '2.jpg', '10.jpg']
+datasetVal ['1.jpg', '12.jpg', '15.jpg', '16.jpg', '19.jpg', '8.jpg']
+Evaluation Score Train Set 0.7065570794946519
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8176818621469221
+datasetTrain ['18.jpg', '19.jpg', '11.jpg', '2.jpg', '8.jpg', '15.jpg', '3.jpg', '4.jpg', '10.jpg', '7.jpg', '12.jpg', '6.jpg', '17.jpg', '9.jpg']
+datasetVal ['1.jpg', '13.jpg', '14.jpg', '16.jpg', '20.jpg', '5.jpg']
+Evaluation Score Train Set 0.7135401019114084
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.8013881431744899
+datasetTrain ['12.jpg', '8.jpg', '15.jpg', '4.jpg', '3.jpg', '6.jpg', '11.jpg', '13.jpg', '20.jpg', '14.jpg', '9.jpg', '10.jpg', '18.jpg', '2.jpg']
+datasetVal ['1.jpg', '16.jpg', '17.jpg', '19.jpg', '5.jpg', '7.jpg']
+Evaluation Score Train Set 0.7384415792781173
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7432846959855021
+datasetTrain ['5.jpg', '13.jpg', '20.jpg', '16.jpg', '17.jpg', '6.jpg', '4.jpg', '2.jpg', '3.jpg', '7.jpg', '9.jpg', '10.jpg', '12.jpg', '8.jpg']
+datasetVal ['1.jpg', '11.jpg', '14.jpg', '15.jpg', '18.jpg', '19.jpg']
+Evaluation Score Train Set 0.7510070501796033
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.713965263882035
+datasetTrain ['3.jpg', '6.jpg', '5.jpg', '8.jpg', '17.jpg', '10.jpg', '9.jpg', '1.jpg', '20.jpg', '4.jpg', '11.jpg', '15.jpg', '2.jpg', '12.jpg']
+datasetVal ['13.jpg', '14.jpg', '16.jpg', '18.jpg', '19.jpg', '7.jpg']
+Evaluation Score Train Set 0.8020590824400606
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.5948438552743017
+datasetTrain ['8.jpg', '4.jpg', '17.jpg', '11.jpg', '7.jpg', '18.jpg', '13.jpg', '6.jpg', '14.jpg', '20.jpg', '19.jpg', '1.jpg', '3.jpg', '5.jpg']
+datasetVal ['10.jpg', '12.jpg', '15.jpg', '16.jpg', '2.jpg', '9.jpg']
+Evaluation Score Train Set 0.6981033080350849
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.8374073288859115
+datasetTrain ['17.jpg', '8.jpg', '5.jpg', '2.jpg', '20.jpg', '11.jpg', '16.jpg', '19.jpg', '10.jpg', '4.jpg', '7.jpg', '12.jpg', '14.jpg', '15.jpg']
+datasetVal ['1.jpg', '13.jpg', '18.jpg', '3.jpg', '6.jpg', '9.jpg']
+Evaluation Score Train Set 0.7857983649051239
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.632785529522487
+datasetTrain ['17.jpg', '15.jpg', '4.jpg', '1.jpg', '18.jpg', '19.jpg', '6.jpg', '8.jpg', '12.jpg', '13.jpg', '16.jpg', '9.jpg', '14.jpg', '5.jpg']
+datasetVal ['10.jpg', '11.jpg', '2.jpg', '20.jpg', '3.jpg', '7.jpg']
+Evaluation Score Train Set 0.7500470485143363
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7162052677676577
+datasetTrain ['4.jpg', '8.jpg', '6.jpg', '14.jpg', '17.jpg', '2.jpg', '12.jpg', '20.jpg', '1.jpg', '11.jpg', '13.jpg', '16.jpg', '7.jpg', '3.jpg']
+datasetVal ['10.jpg', '15.jpg', '18.jpg', '19.jpg', '5.jpg', '9.jpg']
+Evaluation Score Train Set 0.7400398098534636
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7395554913096944
+datasetTrain ['13.jpg', '18.jpg', '4.jpg', '2.jpg', '14.jpg', '11.jpg', '12.jpg', '7.jpg', '20.jpg', '19.jpg', '10.jpg', '1.jpg', '5.jpg', '3.jpg']
+datasetVal ['15.jpg', '16.jpg', '17.jpg', '6.jpg', '8.jpg', '9.jpg']
+Evaluation Score Train Set 0.7233182539342213
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7785724551212597
+datasetTrain ['7.jpg', '12.jpg', '5.jpg', '13.jpg', '17.jpg', '4.jpg', '19.jpg', '20.jpg', '10.jpg', '6.jpg', '15.jpg', '18.jpg', '9.jpg', '1.jpg']
+datasetVal ['11.jpg', '14.jpg', '16.jpg', '2.jpg', '3.jpg', '8.jpg']
+Evaluation Score Train Set 0.7371250306642915
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.746356642751096
+datasetTrain ['20.jpg', '9.jpg', '2.jpg', '5.jpg', '1.jpg', '4.jpg', '19.jpg', '8.jpg', '15.jpg', '3.jpg', '17.jpg', '7.jpg', '13.jpg', '16.jpg']
+datasetVal ['10.jpg', '11.jpg', '12.jpg', '14.jpg', '18.jpg', '6.jpg']
+Evaluation Score Train Set 0.7765506787056252
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6543634639879843
+datasetTrain ['19.jpg', '14.jpg', '13.jpg', '8.jpg', '18.jpg', '7.jpg', '16.jpg', '9.jpg', '15.jpg', '12.jpg', '10.jpg', '20.jpg', '5.jpg', '4.jpg']
+datasetVal ['1.jpg', '11.jpg', '17.jpg', '2.jpg', '3.jpg', '6.jpg']
+Evaluation Score Train Set 0.7282159231328695
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7671445603244135
+datasetTrain ['3.jpg', '7.jpg', '19.jpg', '18.jpg', '11.jpg', '8.jpg', '17.jpg', '10.jpg', '14.jpg', '1.jpg', '20.jpg', '2.jpg', '9.jpg', '5.jpg']
+datasetVal ['12.jpg', '13.jpg', '15.jpg', '16.jpg', '4.jpg', '6.jpg']
+Evaluation Score Train Set 0.7166977911562984
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7940202016030801
+datasetTrain ['15.jpg', '10.jpg', '1.jpg', '19.jpg', '17.jpg', '8.jpg', '12.jpg', '6.jpg', '5.jpg', '4.jpg', '7.jpg', '13.jpg', '9.jpg', '18.jpg']
+datasetVal ['11.jpg', '14.jpg', '16.jpg', '2.jpg', '20.jpg', '3.jpg']
+Evaluation Score Train Set 0.7320281976747454
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.758249253060037
+datasetTrain ['11.jpg', '15.jpg', '8.jpg', '17.jpg', '9.jpg', '14.jpg', '13.jpg', '6.jpg', '4.jpg', '18.jpg', '3.jpg', '20.jpg', '10.jpg', '19.jpg']
+datasetVal ['1.jpg', '12.jpg', '16.jpg', '2.jpg', '5.jpg', '7.jpg']
+Evaluation Score Train Set 0.744154061497965
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7299555708058573
+datasetTrain ['14.jpg', '20.jpg', '10.jpg', '15.jpg', '17.jpg', '7.jpg', '9.jpg', '4.jpg', '1.jpg', '2.jpg', '11.jpg', '13.jpg', '3.jpg', '6.jpg']
+datasetVal ['12.jpg', '16.jpg', '18.jpg', '19.jpg', '5.jpg', '8.jpg']
+Evaluation Score Train Set 0.773194478447343
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6621945979239762
+datasetTrain ['6.jpg', '19.jpg', '15.jpg', '12.jpg', '20.jpg', '14.jpg', '9.jpg', '5.jpg', '3.jpg', '11.jpg', '13.jpg', '2.jpg', '8.jpg', '17.jpg']
+datasetVal ['1.jpg', '10.jpg', '16.jpg', '18.jpg', '4.jpg', '7.jpg']
+Evaluation Score Train Set 0.7960671636874628
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.6088249990303631
+datasetTrain ['15.jpg', '6.jpg', '10.jpg', '14.jpg', '19.jpg', '5.jpg', '13.jpg', '2.jpg', '9.jpg', '12.jpg', '17.jpg', '16.jpg', '20.jpg', '18.jpg']
+datasetVal ['1.jpg', '11.jpg', '3.jpg', '4.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.76084985075189
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.6909987292133661
+datasetTrain ['2.jpg', '18.jpg', '17.jpg', '8.jpg', '20.jpg', '10.jpg', '3.jpg', '12.jpg', '16.jpg', '15.jpg', '9.jpg', '19.jpg', '6.jpg', '5.jpg']
+datasetVal ['1.jpg', '11.jpg', '13.jpg', '14.jpg', '4.jpg', '7.jpg']
+Evaluation Score Train Set 0.7397078638605804
+Optimal Parameters [0.1, 2]
+Evaluation Score Validation Set 0.7403300319597551
+datasetTrain ['11.jpg', '16.jpg', '8.jpg', '13.jpg', '4.jpg', '9.jpg', '14.jpg', '19.jpg', '12.jpg', '3.jpg', '20.jpg', '7.jpg', '5.jpg', '15.jpg']
+datasetVal ['1.jpg', '10.jpg', '17.jpg', '18.jpg', '2.jpg', '6.jpg']
+Evaluation Score Train Set 0.7635339701080408
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.6847357840490141
+datasetTrain ['14.jpg', '17.jpg', '2.jpg', '8.jpg', '19.jpg', '3.jpg', '11.jpg', '13.jpg', '18.jpg', '9.jpg', '4.jpg', '7.jpg', '12.jpg', '5.jpg']
+datasetVal ['1.jpg', '10.jpg', '15.jpg', '16.jpg', '20.jpg', '6.jpg']
+Evaluation Score Train Set 0.7087054947718794
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.8126688931667244
+datasetTrain ['14.jpg', '19.jpg', '12.jpg', '4.jpg', '17.jpg', '10.jpg', '9.jpg', '1.jpg', '2.jpg', '18.jpg', '20.jpg', '11.jpg', '3.jpg', '5.jpg']
+datasetVal ['13.jpg', '15.jpg', '16.jpg', '6.jpg', '7.jpg', '8.jpg']
+Evaluation Score Train Set 0.7568837989494314
+Optimal Parameters [0.25, 2]
+Evaluation Score Validation Set 0.7002528500857698
+Average Validation Score 0.7395398318159393
+Standard Deviation 0.0758816960762925
+Pipeline:  V3
