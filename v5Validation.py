@@ -108,11 +108,11 @@ net5 = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
 weightsPath = 'frozen_inference_graph.pb'
 
-net2 = cv2.dnn_DetectionModel(weightsPath,configPath)
-net2.setInputSize(320,320)
-net2.setInputScale(1.0/127.5)
-net2.setInputMean((127.5,127.5,127.5))
-net2.setInputSwapRB(True)
+net6 = cv2.dnn_DetectionModel(weightsPath,configPath)
+net6.setInputSize(320,320)
+net6.setInputScale(1.0/127.5)
+net6.setInputMean((127.5,127.5,127.5))
+net6.setInputSwapRB(True)
 
 
 # test_data_path = os.path.dirname(os.getcwd())+"\\data\\new_test_data\\"
@@ -162,7 +162,7 @@ def workFunc(img, workerRange,x,y):
                 break
     return count
     # return up,down,left,right
-def fillSmallSpace(img, workerRange,x,y):
+def fillSmallSpaceV5(img, workerRange,x,y):
     count = 0
     down = 0
     up = 0
@@ -263,7 +263,7 @@ def smoothing(mask,lineImage, workerRange,x,y):
     return lineCount,maskCount
 
     # return up,down,left,right
-def find_optimal_lines(ogSlice,numb):
+def findOptimalLinesV5(ogSlice,numb):
     temp = ogSlice.copy()
     temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
     # ogSlice = cv2.Canny(ogSlice,125,150)
@@ -317,7 +317,7 @@ def v5(img,numb,PARAMETERS,dictOfBinaryMask):
     blob = cv2.dnn.blobFromImage(img, swapRB=True)
     net5.setInput(blob)
     boxes, masks = net5.forward(["detection_out_final", "detection_masks"])
-    classIds, _, boxes2 = net2.detect(img,confThreshold = PARAMETERS[0])
+    classIds, _, boxes2 = net6.detect(img,confThreshold = PARAMETERS[0])
 
     if not isinstance(classIds,tuple):
         detection_count = boxes.shape[2]
@@ -359,7 +359,7 @@ def v5(img,numb,PARAMETERS,dictOfBinaryMask):
 
         ogSlice = img[minY:maxY, minX:maxX]
         maskSlice = black_image[minY:maxY, minX:maxX]
-        ogSlice = find_optimal_lines(ogSlice,numb)
+        ogSlice = findOptimalLinesV5(ogSlice,numb)
         ogSlice = cv2.dilate(ogSlice,(5,5),iterations=3)
         # cv2.imshow("OG Slice ", ogSlice)
         newSlice = ogSlice.copy()
@@ -391,7 +391,7 @@ def v5(img,numb,PARAMETERS,dictOfBinaryMask):
         for i in range(len(cpSlice)):
             for j in range(len(cpSlice[0])):
                 if maskSlice[i][j] != 255:
-                    workVal = fillSmallSpace(ogSlice,2,i,j)
+                    workVal = fillSmallSpaceV5(ogSlice,2,i,j)
                     if workVal == 2:
                         cpSlice[i][j] = 255
 
@@ -486,7 +486,6 @@ def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PA
         averageIOU /= len(datasetTrain)
         # print(averageIOU)
         listOfEvaluations.append(averageIOU)
-
 
 def runTestV5():
     listTestEvaluations = []
