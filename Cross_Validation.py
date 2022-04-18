@@ -5,7 +5,6 @@ import math
 import random
 import re
 import time
-from turtle import numinput
 from cv2 import INTER_AREA, INTER_BITS, INTER_CUBIC, INTER_LANCZOS4, INTER_LINEAR, INTER_LINEAR_EXACT, INTER_MAX, imread, imshow, waitKey
 import numpy as np
 import cv2
@@ -96,9 +95,6 @@ def select_new_dataset():
     for file in files:
         if file not in datasetTrain:
             datasetVal.append(file)
-    # datasetTrain.sort(key=natural_keys)
-    # datasetVal.sort(key=natural_keys)
-
 #Region v1
 #parameters that will be adjusted include: 
 # - thresholding method
@@ -503,8 +499,8 @@ def runTestV3():
 #Region v4
 #parameters that will be adjusted include: 
 # - confidence threshold value
-# - range of workers
-# - 
+# - longRange range of workers
+# - shortRange range of workers
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
 weightsPath = 'frozen_inference_graph.pb'
 
@@ -659,11 +655,6 @@ def find_optimal_lines(ogSlice,numb):
 def v4(img,numb,PARAMETERS,dictOfBinaryMask):
     thres = PARAMETERS[0]
     classIds, confs, bbox = net4.detect(img,confThreshold = thres)
-    # print("BOX: ",bbox[0])
-    # x1 = bbox[0][0]
-    # y1 = bbox[0][1]
-    # x2 = bbox[0][2]
-    # y2 = bbox[0][3]
     boxes = []
     confidenceList = []
     imgNew = img.copy()
@@ -676,7 +667,6 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
             y2 = box[3]
             boxes.append([x1,y1,x2,y2])
             confidenceList.append(confs)
-            # cv2.rectangle(img,[x1,y1,x2,y2],color=(0,0,255),thickness=2)
 
         maxX = 0
         maxY = 0
@@ -714,9 +704,6 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
         smallRange = int(max(len(ogSlice)/PARAMETERS[1],len(ogSlice[0])/PARAMETERS[1]))
         longRange = int(max(len(ogSlice)/PARAMETERS[2],len(ogSlice[0])/PARAMETERS[2]))
         workVal = 0
-        
-        
-        
         ogSlice = cpSlice.copy()
         for i in range(len(ogSlice)):
             for j in range(len(ogSlice[0])):
@@ -741,9 +728,6 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
                     if workVal == 2:
                         cpSlice[i][j] = 255
                         ogSlice[i][j] = 255
-        # imshow("ogSlice",ogSlice)
-        # imshow("cpSlice",cpSlice)
-        # waitKey(0)
         ogSlice = cpSlice.copy()
         for i in range(len(ogSlice)):
             for j in range(len(ogSlice[0])):
@@ -755,17 +739,13 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
                     if workVal < 2:
                         # ogSlice[i][j] = 0
                         cpSlice[i][j] = 0
-        
-        # imshow("ogSlice",ogSlice)
-        # imshow("cpSlice",cpSlice)
-        # waitKey(0)    
+           
         rmSlice = cpSlice.copy()
         drcontours = rmSlice.copy()
         drcontours = cv2.cvtColor(drcontours, cv2.COLOR_GRAY2RGB)
         removeIslands = cv2.pyrDown(rmSlice)
         _, threshed = cv2.threshold(rmSlice, 0, 255, cv2.THRESH_BINARY)
         contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # print("Cont",contours)
         #find maximum contour and draw
         
         # print("NUMB",numb)
@@ -782,8 +762,6 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
             cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
             cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
             
-        # print("Cont",cmax)
-        
 
         for i in range(len(ogSlice)):
             for j in range(len(ogSlice[0])):
@@ -796,15 +774,13 @@ def v4(img,numb,PARAMETERS,dictOfBinaryMask):
         fMask.fill(0)
         dictOfBinaryMask[numb] = fMask
 
-def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain):
+def findOptimalParamsV4(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain):
     for i in range(1):
         PARAMETERS = selectParameters4()
         print("PARAMS ",PARAMETERS)
         if PARAMETERS in evaluationParameters:
             break
         evaluationParameters.append(PARAMETERS)#[PARAMETERS[0],PARAMETERS[1],PARAMETERS[2]]
-        # print(evaluationParameters)
-        # addToLog(PARAMETERS.copy(),"Parameters")
         jobs = []
         for image in datasetTrain:
             current = imread(imageDataLocation+image)
@@ -839,8 +815,6 @@ def runTestV4():
         select_new_dataset()
         addToLog(datasetTrain,f'{datasetTrain=}'.split('=')[0])
         addToLog(datasetVal,f'{datasetVal=}'.split('=')[0])
-        # listOfBinaryMask = []
-        # for i in range(10):
         listOfEvaluations = []
         evaluationParameters = []
         averageIOU = 0
@@ -852,28 +826,28 @@ def runTestV4():
             PARAMETERS = manager.list()
             jobs = []
             for i in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV4,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
                 job.join()
             jobs.clear()
             for i in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV4,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
                 job.join()
             jobs.clear()
             for i in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV4,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
                 job.join()
             jobs.clear()
             for i in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV4,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
@@ -915,7 +889,9 @@ def runTestV4():
 
 #EndRegion
 #Region v5
-
+#parameters that will be adjusted include: 
+# - confidence threshold value
+# - Range of workers
 net5 = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\\mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
 
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
@@ -1267,7 +1243,7 @@ def v5(img,numb,PARAMETERS,dictOfBinaryMask):
         fMask.fill(0)
         dictOfBinaryMask[numb] = fMask
 
-def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain):
+def findOptimalParamsV5(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain):
     for i in range(1):
         PARAMETERS = selectParameters5()
         # print("PARAMS ",PARAMETERS)
@@ -1323,7 +1299,7 @@ def runTestV5():
             PARAMETERS = manager.list()
             jobs = []
             for _ in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV5,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
@@ -1331,7 +1307,7 @@ def runTestV5():
             jobs.clear()
             print("Job Completed 1: ",i)
             for _ in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV5,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
@@ -1339,7 +1315,7 @@ def runTestV5():
             jobs.clear()
             print("Job Completed 2: ",i)
             for _ in range(6):
-                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1 = Process(target=findOptimalParamsV5,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
                 p1.start()
                 jobs.append(p1)
             for job in jobs:
