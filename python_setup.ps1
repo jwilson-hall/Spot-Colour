@@ -12,7 +12,7 @@ Write-Output "Installing new virtual env"
 pip install virtualenv
 
 # create new virtual to run project
-python -m venv fyp_env
+py -m venv fyp_env
 Write-Output "activate the new virt env"
 
 # activate the new env
