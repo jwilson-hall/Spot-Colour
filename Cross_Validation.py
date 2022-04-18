@@ -32,7 +32,6 @@ def calculateSTD(evaluationList, evaluationMean):
     standardDeviation = sumX / n
     standardDeviation = math.sqrt(standardDeviation)
     return standardDeviation
-    
 
 def runTimeCount():
     i = 1
@@ -77,9 +76,6 @@ def calc_IoU(mask1, mask2):   # From the question.
     # print("intersection",intersection)
     iou = intersection/(mask1_area+mask2_area-intersection)
     return iou
-
-
-
 
 # def runTest():
 def atoi(text):
@@ -512,11 +508,11 @@ def runTestV3():
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
 weightsPath = 'frozen_inference_graph.pb'
 
-net = cv2.dnn_DetectionModel(weightsPath,configPath)
-net.setInputSize(320,320)
-net.setInputScale(1.0/127.5)
-net.setInputMean((127.5,127.5,127.5))
-net.setInputSwapRB(True)
+net4 = cv2.dnn_DetectionModel(weightsPath,configPath)
+net4.setInputSize(320,320)
+net4.setInputScale(1.0/127.5)
+net4.setInputMean((127.5,127.5,127.5))
+net4.setInputSwapRB(True)
 
 
 # test_data_path = os.path.dirname(os.getcwd())+"\\data\\new_test_data\\"
@@ -660,10 +656,9 @@ def find_optimal_lines(ogSlice,numb):
         # print("Compactness ",compactness,"%",numb)
     return temp
 
-
 def v4(img,numb,PARAMETERS,dictOfBinaryMask):
     thres = PARAMETERS[0]
-    classIds, confs, bbox = net.detect(img,confThreshold = thres)
+    classIds, confs, bbox = net4.detect(img,confThreshold = thres)
     # print("BOX: ",bbox[0])
     # x1 = bbox[0][0]
     # y1 = bbox[0][1]
@@ -832,7 +827,6 @@ def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PA
         # print(averageIOU)
         listOfEvaluations.append(averageIOU)
 
-
 def runTestV4():
     listTestEvaluations = []
     numRange = 50
@@ -921,182 +915,230 @@ def runTestV4():
 
 #EndRegion
 #Region v5
-def rV5(img,numb):
-    confsThr = 0.4
-    boxThr = 0.5
-    #Loading in rcnn mask model
-    net5 = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\\mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
-    #Loading in bounding box model
-    net5 = cv2.dnn_DetectionModel("frozen_inference_graph.pb","ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt")
-    net5.setInputSize(320,320)
-    net5.setInputScale(1.0/127.5)
-    net5.setInputMean((127.5,127.5,127.5))
-    net5.setInputSwapRB(True)
-    #load our input image and grab its spatial dimensions
 
-    def find_optimal_lines_v5(ogSlice,numb):
+net5 = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\\mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
+
+configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
+weightsPath = 'frozen_inference_graph.pb'
+
+net6 = cv2.dnn_DetectionModel(weightsPath,configPath)
+net6.setInputSize(320,320)
+net6.setInputScale(1.0/127.5)
+net6.setInputMean((127.5,127.5,127.5))
+net6.setInputSwapRB(True)
+
+
+def selectParameters5():#selecting the parameters that will be swapped for each iteration
+    PARAMETERS = list()
+    PARAMETERS.append(random.choice(confidenceList))
+    PARAMETERS.append(random.choice(LongRangeWorker))
+    return PARAMETERS
+
+def workFunc(img, workerRange,x,y):
+    count = 0
+    down = 0
+    up = 0
+    left = 0
+    right = 0
+    tempFalse = False
+    for i in range(x+1,min(x+workerRange,len(img))):
+        if img[i][y] != 0:
+            if tempFalse!= True:
+                count+=1 
+                down+=1
+                tempFalse=True
+                break    
+    tempFalse = False
+    for i in range(x-1,max(x-workerRange,-1),-1):
+        if img[i][y] != 0:
+            if tempFalse != True:
+                count+=1
+                up+=1
+                tempFalse=True
+                break
+    tempFalse = False
+    for i in range(y+1,min(y+workerRange,len(img[0])-1)):
+        if img[x][i] != 0:
+            if tempFalse!= True:
+                count+=1
+                right+=1
+                tempFalse=True
+                break
+    tempFalse = False
+    for i in range(y-1,max(y-workerRange,-1),-1):
+        if img[x][i] != 0:
+            if tempFalse != True:
+                count+=1
+                left+=1
+                tempFalse=True
+                break
+    return count
+    # return up,down,left,right
+def fillSmallSpaceV5(img, workerRange,x,y):
+    count = 0
+    down = 0
+    up = 0
+    left = 0
+    right = 0
+    tempFalse = False
+    for i in range(x+1,min(x+workerRange,len(img))):
+        if img[i][y] != 0:
+            if tempFalse!= True:
+                count+=1 
+                down+=1
+                tempFalse=True
+                break    
+    tempFalse = False
+    for i in range(x-1,max(x-workerRange,-1),-1):
+        if img[i][y] != 0:
+            if tempFalse != True:
+                count+=1
+                up+=1
+                tempFalse=True
+                break
+    if count == 2:
+        return count
+    else:
+        count = 0
+    tempFalse = False
+    for i in range(y+1,min(y+workerRange,len(img[0])-1)):
+        if img[x][i] != 0:
+            if tempFalse!= True:
+                count+=1
+                right+=1
+                tempFalse=True
+                break
+    tempFalse = False
+    for i in range(y-1,max(y-workerRange,-1),-1):
+        if img[x][i] != 0:
+            if tempFalse != True:
+                count+=1
+                left+=1
+                tempFalse=True
+                break
+    return count
+
+def smoothing(mask,lineImage, workerRange,x,y):
+    maskCount = 0
+    lineCount = 0
+    tempFalse = False
+    for i in range(x+1,min(x+workerRange,len(mask))):
+        if mask[i][y] != 0:
+            if tempFalse!= True:
+                maskCount+=1
+                tempFalse=True
+                break
+        elif lineImage[i][y] != 0:
+            if tempFalse != True:
+                lineCount+=1
+                tempFalse=True
+                break
+    tempFalse = False
+    for i in range(x-1,max(x-workerRange,-1),-1):
+        if mask[i][y] != 0:
+            if tempFalse!= True:
+                maskCount+=1
+                tempFalse=True
+                break
+        elif lineImage[i][y] != 0:
+            if tempFalse != True:
+                lineCount+=1
+                tempFalse=True
+                break    
+    
+    tempFalse = False
+    for i in range(y+1,min(y+workerRange,len(mask[0])-1)):
+        if mask[x][i] != 0:
+            if tempFalse!= True:
+                maskCount+=1
+                tempFalse=True  
+                break
+        elif lineImage[x][i] != 0:
+            if tempFalse != True:
+                lineCount+=1
+                tempFalse=True
+                break
+
+    tempFalse = False
+    for i in range(y-1,max(y-workerRange,-1),-1):
+        if mask[x][i] != 0:
+            if tempFalse!= True:
+                maskCount+=1
+                tempFalse=True
+                break      
+        elif lineImage[x][i] != 0:
+            if tempFalse != True:
+                lineCount+=1
+                tempFalse=True
+                break
+
+    return lineCount,maskCount
+
+    # return up,down,left,right
+def findOptimalLinesV5(ogSlice,numb):
+    temp = ogSlice.copy()
+    temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
+    # ogSlice = cv2.Canny(ogSlice,125,150)
+    temp = cv2.Canny(temp,100,175)
+    size = np.size(ogSlice)
+    whiteCount = np.count_nonzero(temp)
+    compactness = (whiteCount/size)*100
+    # print("Compactness ",compactness,"%",numb)
+    if compactness < 2:
         temp = ogSlice.copy()
-        temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
-        # ogSlice = cv2.Canny(ogSlice,125,150)
+        temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
         temp = cv2.Canny(temp,100,175)
         size = np.size(ogSlice)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
         # print("Compactness ",compactness,"%",numb)
-        if compactness < 2:
-            temp = ogSlice.copy()
-            temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
-            temp = cv2.Canny(temp,100,175)
-            size = np.size(ogSlice)
-            whiteCount = np.count_nonzero(temp)
-            compactness = (whiteCount/size)*100
-            # print("Compactness ",compactness,"%",numb)
-        if compactness > 4:
-            temp = ogSlice.copy()
-            temp = cv2.GaussianBlur(ogSlice, (9,9), cv2.BORDER_REFLECT)
-            temp = cv2.Canny(temp,100,175)
-            size = np.size(ogSlice)
-            whiteCount = np.count_nonzero(temp)
-            compactness = (whiteCount/size)*100
-            # print("Compactness ",compactness,"%",numb)
-        if compactness > 5:
-            temp = ogSlice.copy()
-            temp = cv2.GaussianBlur(ogSlice, (11,11), cv2.BORDER_CONSTANT)
-            temp = cv2.Canny(temp,100,175)
-            size = np.size(ogSlice)
-            whiteCount = np.count_nonzero(temp)
-            compactness = (whiteCount/size)*100
-            # print("Compactness ",compactness,"%",numb)
-        if compactness < 1.15:
-            temp = ogSlice.copy()
-            # temp = cv2.GaussianBlur(ogSlice, (3,3), cv2.BORDER_CONSTANT)
-            # threshold
-            
-            temp = cv2.Canny(temp,100,175)
-            size = np.size(ogSlice)
-            whiteCount = np.count_nonzero(temp)
-            compactness = (whiteCount/size)*100
-            # print("Compactness ",compactness,"%",numb)
-        print("Compactness ",compactness,"%",numb)
-        return temp
-
-    def fillSmallSpace_v5(img, workerRange,x,y):
-        count = 0
-        down = 0
-        up = 0
-        left = 0
-        right = 0
-        tempFalse = False
-        for i in range(x+1,min(x+workerRange,len(img))):
-            if img[i][y] != 0:
-                if tempFalse!= True:
-                    count+=1 
-                    down+=1
-                    tempFalse=True
-                    break    
-        tempFalse = False
-        for i in range(x-1,max(x-workerRange,-1),-1):
-            if img[i][y] != 0:
-                if tempFalse != True:
-                    count+=1
-                    up+=1
-                    tempFalse=True
-                    break
-        if count == 2:
-            return count
-        else:
-            count = 0
-        tempFalse = False
-        for i in range(y+1,min(y+workerRange,len(img[0])-1)):
-            if img[x][i] != 0:
-                if tempFalse!= True:
-                    count+=1
-                    right+=1
-                    tempFalse=True
-                    break
-        tempFalse = False
-        for i in range(y-1,max(y-workerRange,-1),-1):
-            if img[x][i] != 0:
-                if tempFalse != True:
-                    count+=1
-                    left+=1
-                    tempFalse=True
-                    break
-        return count
-
-    def smoothing(mask,lineImage, workerRange,x,y):
-        maskCount = 0
-        lineCount = 0
-        tempFalse = False
-        for i in range(x+1,min(x+workerRange,len(mask))):
-            if mask[i][y] != 0:
-                if tempFalse!= True:
-                    maskCount+=1
-                    tempFalse=True
-                    break
-            elif lineImage[i][y] != 0:
-                if tempFalse != True:
-                    lineCount+=1
-                    tempFalse=True
-                    break
-        tempFalse = False
-        for i in range(x-1,max(x-workerRange,-1),-1):
-            if mask[i][y] != 0:
-                if tempFalse!= True:
-                    maskCount+=1
-                    tempFalse=True
-                    break
-            elif lineImage[i][y] != 0:
-                if tempFalse != True:
-                    lineCount+=1
-                    tempFalse=True
-                    break    
+    if compactness > 4:
+        temp = ogSlice.copy()
+        temp = cv2.GaussianBlur(ogSlice, (9,9), cv2.BORDER_REFLECT)
+        temp = cv2.Canny(temp,100,175)
+        size = np.size(ogSlice)
+        whiteCount = np.count_nonzero(temp)
+        compactness = (whiteCount/size)*100
+        # print("Compactness ",compactness,"%",numb)
+    if compactness > 5:
+        temp = ogSlice.copy()
+        temp = cv2.GaussianBlur(ogSlice, (11,11), cv2.BORDER_CONSTANT)
+        temp = cv2.Canny(temp,100,175)
+        size = np.size(ogSlice)
+        whiteCount = np.count_nonzero(temp)
+        compactness = (whiteCount/size)*100
+        # print("Compactness ",compactness,"%",numb)
+    if compactness < 1.15:
+        temp = ogSlice.copy()
+        # temp = cv2.GaussianBlur(ogSlice, (3,3), cv2.BORDER_CONSTANT)
+        # threshold
         
-        tempFalse = False
-        for i in range(y+1,min(y+workerRange,len(mask[0])-1)):
-            if mask[x][i] != 0:
-                if tempFalse!= True:
-                    maskCount+=1
-                    tempFalse=True  
-                    break
-            elif lineImage[x][i] != 0:
-                if tempFalse != True:
-                    lineCount+=1
-                    tempFalse=True
-                    break
+        temp = cv2.Canny(temp,100,175)
+        size = np.size(ogSlice)
+        whiteCount = np.count_nonzero(temp)
+        compactness = (whiteCount/size)*100
+        # print("Compactness ",compactness,"%",numb)
+    # print("Compactness ",compactness,"%",numb)
+    return temp
 
-        tempFalse = False
-        for i in range(y-1,max(y-workerRange,-1),-1):
-            if mask[x][i] != 0:
-                if tempFalse!= True:
-                    maskCount+=1
-                    tempFalse=True
-                    break      
-            elif lineImage[x][i] != 0:
-                if tempFalse != True:
-                    lineCount+=1
-                    tempFalse=True
-                    break
+def v5(img,numb,PARAMETERS,dictOfBinaryMask): 
+    H, W, _ = img.shape
+    # Create black image with same dimensions as input image
+    black_image = np.zeros((H, W), np.uint8)
+    # Detect objects inside input image
+    blob = cv2.dnn.blobFromImage(img, swapRB=True)
+    net5.setInput(blob)
+    boxes, masks = net5.forward(["detection_out_final", "detection_masks"])
+    classIds, _, boxes2 = net6.detect(img,confThreshold = PARAMETERS[0])
 
-        return lineCount,maskCount
-
-    def v5(img, numb):
-        
-        H, W, _ = img.shape
-        # Create black image with same dimensions as input image
-        black_image = np.zeros((H, W), np.uint8)
-        # Detect objects inside input image
-        blob = cv2.dnn.blobFromImage(img, swapRB=True)
-        net5.setInput(blob)
-        boxes, masks = net5.forward(["detection_out_final", "detection_masks"])
-        _, _, boxes2 = net5.detect(img,confThreshold = boxThr)
+    if not isinstance(classIds,tuple):
         detection_count = boxes.shape[2]
         boundingBox = []
         for i in range(detection_count):
             box = boxes[0, 0, i]    
             classID = int(box[1])
             confidence = box[2]
-            if confidence < confsThr:
+            if confidence < PARAMETERS[0]:
                 continue
             
             #Get box coordinates
@@ -1129,7 +1171,7 @@ def rV5(img,numb):
 
         ogSlice = img[minY:maxY, minX:maxX]
         maskSlice = black_image[minY:maxY, minX:maxX]
-        ogSlice = find_optimal_lines_v5(ogSlice,numb)
+        ogSlice = findOptimalLinesV5(ogSlice,numb)
         ogSlice = cv2.dilate(ogSlice,(5,5),iterations=3)
         # cv2.imshow("OG Slice ", ogSlice)
         newSlice = ogSlice.copy()
@@ -1144,7 +1186,7 @@ def rV5(img,numb):
         # cv2.imshow("OG Slice ", ogSlice)
         cpSlice = maskSlice.copy()#
         
-        workerRange = int(max(len(ogSlice)/10,len(ogSlice[0])/10))
+        workerRange = int(max(len(ogSlice)/PARAMETERS[1],len(ogSlice[0])/PARAMETERS[1]))
         for i in range(len(ogSlice)):
             for j in range(len(ogSlice[0])):
                 if maskSlice[i][j] != 255:
@@ -1158,11 +1200,10 @@ def rV5(img,numb):
         cpSlice = cv2.bitwise_or(maskSlice,ogSlice)
         cpSlice = cv2.bitwise_or(cpSlice2,cpSlice)
         # cpSlice = cpSlice2
-        smallWorkerRange = int(max(len(ogSlice)/100,len(ogSlice[0])/100))
         for i in range(len(cpSlice)):
             for j in range(len(cpSlice[0])):
                 if maskSlice[i][j] != 255:
-                    workVal = fillSmallSpace_v5(ogSlice,2,i,j)
+                    workVal = fillSmallSpaceV5(ogSlice,2,i,j)
                     if workVal == 2:
                         cpSlice[i][j] = 255
 
@@ -1198,19 +1239,19 @@ def rV5(img,numb):
         removeIslands = cv2.pyrDown(rmSlice)
         _, threshed = cv2.threshold(rmSlice, 0, 255, cv2.THRESH_BINARY)
         contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
+        if len(contours) > 0:
         #find maximum contour and draw   
-        cmax = max(contours, key = cv2.contourArea) 
-        epsilon = 0.002 * cv2.arcLength(cmax, True)
-        approx = cv2.approxPolyDP(cmax, epsilon, True)
-        cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)
-        width, height = rmSlice.shape
-        # imshow("Contour", drcontours)
-        # waitKey(0)
-        #fill maximum contour and draw   
-        removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
-        cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
-        cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
+            cmax = max(contours, key = cv2.contourArea) 
+            epsilon = 0.002 * cv2.arcLength(cmax, True)
+            approx = cv2.approxPolyDP(cmax, epsilon, True)
+            cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)
+            width, height = rmSlice.shape
+            # imshow("Contour", drcontours)
+            # waitKey(0)
+            #fill maximum contour and draw   
+            removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
+            cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
+            cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
 
         # waitKey(0)
         black_image_lines = black_image.copy()
@@ -1219,45 +1260,133 @@ def rV5(img,numb):
             for j in range(len(cpSlice[0])):
                 if cpSlice[i][j] != 0:
                     black_image_lines[i+minY][j+minX] = cpSlice[i][j]
-        black_image = black_image_lines
-        # for i in range(len(ogSlice)):
-        #     for j in range(len(ogSlice[0])):
-        #         if ogSlice[i][j] != 0:
-        #             black_image_lines[i+minY][j+minX] = ogSlice[i][j]
+        dictOfBinaryMask[numb] = black_image_lines
+    else:
+        fMask = img.copy()
+        fMask = cv2.cvtColor(fMask, cv2.COLOR_BGR2GRAY)
+        fMask.fill(0)
+        dictOfBinaryMask[numb] = fMask
 
+def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain):
+    for i in range(1):
+        PARAMETERS = selectParameters5()
+        # print("PARAMS ",PARAMETERS)
+        if PARAMETERS in evaluationParameters:
+            break
+        evaluationParameters.append(PARAMETERS)#[PARAMETERS[0],PARAMETERS[1],PARAMETERS[1]]
+        # print(evaluationParameters)
+        # addToLog(PARAMETERS.copy(),"Parameters")
+        jobs = []
+        for image in datasetTrain:
+            current = imread(imageDataLocation+image)
+            p1 = Process(target=v5,args=[current,image,PARAMETERS,dictOfBinaryMask])
+            p1.start()
+            jobs.append(p1)                    
+        for job in jobs:
+            job.join()
+        averageIOU=0
+        # print("Running Test on evalutaions")
+        for image in datasetTrain:
+            imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
+            max_IoU = 0
+            for i in range (1,6):
+                mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
+                mask2 = imread(truthDataLocation+mask2)
+                mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
+                max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
+            averageIOU+=max_IoU                    
+        averageIOU /= len(datasetTrain)
+        # print(averageIOU)
+        listOfEvaluations.append(averageIOU)
 
-        grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        for i in range(len(img)):
-            for j in range(len(img[0])):
-                if black_image[i][j] != 255:
-                    img[i][j] = grey[i][j]
+def runTestV5():
+    listTestEvaluations = []
+    numRange = 30
+    startTime = time.time()
+    for i in range(numRange):
+        print("Current run time: ",startTime-time.time())
+        print(i,"iteration")
+        addToLog(i,"Loop: ")
+        select_new_dataset()
+        addToLog(datasetTrain,f'{datasetTrain=}'.split('=')[0])
+        addToLog(datasetVal,f'{datasetVal=}'.split('=')[0])
+        # listOfBinaryMask = []
+        # for i in range(10):
+        listOfEvaluations = []
+        evaluationParameters = []
+        averageIOU = 0
+        optimalParams = []
+        with Manager() as manager:
+            dictOfBinaryMask = manager.dict()
+            evaluationParameters = manager.list()
+            listOfEvaluations = manager.list()
+            PARAMETERS = manager.list()
+            jobs = []
+            for _ in range(6):
+                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1.start()
+                jobs.append(p1)
+            for job in jobs:
+                job.join()
+            jobs.clear()
+            print("Job Completed 1: ",i)
+            for _ in range(6):
+                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1.start()
+                jobs.append(p1)
+            for job in jobs:
+                job.join()
+            jobs.clear()
+            print("Job Completed 2: ",i)
+            for _ in range(6):
+                p1 = Process(target=findOptimalParams,args=[listOfEvaluations,evaluationParameters,dictOfBinaryMask,PARAMETERS,datasetTrain])
+                p1.start()
+                jobs.append(p1)
+            for job in jobs:
+                job.join()
+            jobs.clear()
+            print("Job Completed 3: ",i)
+            print("Length of listOfEvaluations",len(listOfEvaluations))
+            print("Length of evaluationParameters",len(evaluationParameters))
+            print("Length of listTestEvaluations",len(listTestEvaluations))
+            optimalParamsResults = listOfEvaluations[listOfEvaluations.index(max(listOfEvaluations))]
+            optimalParams = evaluationParameters[listOfEvaluations.index(max(listOfEvaluations))]
+            addToLog(optimalParamsResults,"Evaluation Score Train Set")
+            print("Second part")
+            
+            for image in datasetVal:
+                current = imread(imageDataLocation+image)
+                p1 = Process(target=v5,args=[current,image,optimalParams,dictOfBinaryMask])
+                p1.start()
+                jobs.append(p1)
+            for job in jobs:
+                job.join()
+            averageIOU=0
+            for image in datasetVal:
+                imageNumber = int(re.compile(r'\d+(?:\.\d+)?').findall(image)[0])
+                max_IoU = 0
+                for i in range (1,6):
+                    mask2 = str(imageNumber)+"_gt"+str(i)+".jpg"
+                    mask2 = imread(truthDataLocation+mask2)
+                    mask2 = cv2.cvtColor(mask2,cv2.COLOR_BGR2GRAY)                
+                    max_IoU = max(max_IoU,calc_IoU(dictOfBinaryMask[image],mask2))
+                averageIOU+=max_IoU
+            averageIOU /= len(datasetVal)
+            addToLog(optimalParams,"Optimal Parameters")
+            addToLog(averageIOU,"Evaluation Score Validation Set")
+            listTestEvaluations.append(averageIOU)
+            print("Second part Done")
+    averageTestScore = sum(listTestEvaluations)/len(listTestEvaluations)
+    addToLog(averageTestScore,"Average Validation Score")
+    addToLog(calculateSTD(listTestEvaluations,averageTestScore), "Standard Deviation")
+    addToLog("v5","Pipeline: ")
 
-        print("Done with Image: ",numb)
-        # cv2.imshow("Image", img)
-        # cv2.imshow("Black image", black_image)
-        # cv2.imshow("Black image lines", black_image_lines)
-
-        # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-        # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
-
-        cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-        cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
-
-        # cv2.waitKey(0)
 #EndRegion
-
 
 if __name__ == "__main__":
     runTimeNumber = str(runTimeCount())   
     start_time = time.time() 
-    runTestV2()
-    # testimg = imread(imageDataLocation+"5.jpg")
-    # tempDict = dict()
-    # v2(testimg,"5.jpb",[cv2.THRESH_OTSU,cv2.THRESH_BINARY,0.5],tempDict)
+    runTestV5()
     print("--- %s seconds ---" % (time.time() - start_time))
     saveLog()
     print("Run time number ",runTimeNumber)
-
-
-
-
