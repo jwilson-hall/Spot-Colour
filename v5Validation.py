@@ -489,10 +489,10 @@ def findOptimalParams(listOfEvaluations,evaluationParameters,dictOfBinaryMask,PA
 
 def runTestV5():
     listTestEvaluations = []
-    numRange = 30
+    numRange = 20
     startTime = time.time()
     for i in range(numRange):
-        print("Current run time: ",startTime-time.time())
+        print("Current run time: ",time.time()-startTime)
         print(i,"iteration")
         addToLog(i,"Loop: ")
         select_new_dataset()

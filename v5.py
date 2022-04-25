@@ -166,35 +166,6 @@ def smoothing(mask,lineImage, workerRange,x,y):
                 break
 
     return lineCount,maskCount
-#https://stackoverflow.com/questions/46441893/connected-component-labeling-in-python
-def imshow_components(labels):
-    # Map component labels to hue val
-    label_hue = np.uint8(179*labels/np.max(labels))
-    blank_ch = 255*np.ones_like(label_hue)
-    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
-
-    # cvt to BGR for display
-    labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
-
-    # set bg label to black
-    labeled_img[label_hue==0] = 0
-
-    cv2.imshow('labeled.png', labeled_img)
-    # cv2.waitKey()
-
-def return_components(labels):
-    # Map component labels to hue val
-    label_hue = np.uint8(179*labels/np.max(labels))
-    blank_ch = 255*np.ones_like(label_hue)
-    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
-
-    # cvt to BGR for display
-    labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
-
-    # set bg label to black
-    labeled_img[label_hue==0] = 0
-
-    return labeled_img
 
 def run_algorithm(img, numb):
         
@@ -283,7 +254,6 @@ def run_algorithm(img, numb):
                     cpSlice[i][j] = 255
 
     nb_components, output, stats, centroids = cv2.connectedComponentsWithStats(cpSlice)
-    # imshow_components(output)
 
     sizes = stats[1:, -1]
     nb_components = nb_components - 1
