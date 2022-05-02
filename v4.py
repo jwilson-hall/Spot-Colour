@@ -132,44 +132,53 @@ def find_optimal_lines(ogSlice,numb):
     temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
     # ogSlice = cv2.Canny(ogSlice,125,150)
     temp = cv2.Canny(temp,100,175)
-    size = np.size(ogSlice)
+    size = np.size(temp)
     whiteCount = np.count_nonzero(temp)
     compactness = (whiteCount/size)*100
-    # print("Compactness ",compactness,"%",numb)
-    if compactness < 2:
+    print("Compactness ",compactness,"%1",numb)
+    # while (compactness < 6 or compactness > 9):
+    if compactness < 3:
         temp = ogSlice.copy()
         temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
         temp = cv2.Canny(temp,100,175)
-        size = np.size(ogSlice)
+        size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        # print("Compactness ",compactness,"%",numb)
-    if compactness > 4:
+        print("Compactness ",compactness,"%2",numb)
+    if compactness < 3.5:
         temp = ogSlice.copy()
-        temp = cv2.GaussianBlur(ogSlice, (9,9), cv2.BORDER_REFLECT)
+        temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
+        # threshold        
         temp = cv2.Canny(temp,100,175)
-        size = np.size(ogSlice)
+        size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        # print("Compactness ",compactness,"%",numb)
-    if compactness > 5:
+        print("Compactness ",compactness,"%5",numb)
+    if compactness > 8:
         temp = ogSlice.copy()
-        temp = cv2.GaussianBlur(ogSlice, (11,11), cv2.BORDER_CONSTANT)
+        temp = cv2.GaussianBlur(ogSlice, (7,7), cv2.BORDER_REFLECT)
         temp = cv2.Canny(temp,100,175)
-        size = np.size(ogSlice)
+        size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        # print("Compactness ",compactness,"%",numb)
-    if compactness < 1.15:
+        print("Compactness ",compactness,"%3",numb)
+    if compactness > 9:
         temp = ogSlice.copy()
-        # temp = cv2.GaussianBlur(ogSlice, (3,3), cv2.BORDER_CONSTANT)
-        # threshold
-        
+        temp = cv2.GaussianBlur(ogSlice, (9,9), cv2.BORDER_CONSTANT)
         temp = cv2.Canny(temp,100,175)
-        size = np.size(ogSlice)
+        size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        # print("Compactness ",compactness,"%",numb)
+        print("Compactness ",compactness,"%4",numb)
+    if compactness < 6:
+        temp = ogSlice.copy()
+        temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
+        # threshold        
+        temp = cv2.Canny(temp,150,175)
+        size = np.size(temp)
+        whiteCount = np.count_nonzero(temp)
+        compactness = (whiteCount/size)*100
+        print("Compactness ",compactness,"%5",numb)
     print("Compactness ",compactness,"%",numb)
     return temp
 
@@ -336,8 +345,8 @@ def run_algorithm(img, numb):
             if fMask[i][j][0] == 255:
                 fOutput[i][j] = img[i][j]
         
-    # imshow("fMask",fMask)
-    # imshow("fOutput",fOutput)
+    cv2.imshow("fMask",fMask)
+    cv2.imshow("fOutput",fOutput)
     # imshow("ogSlice",ogSlice)
     # imshow("cpSlice",cpSlice)
     # cv2.imwrite(data_path+"v4\\"+str(numb)+"_ogSlice.jpg",cpSlice)
@@ -360,7 +369,7 @@ data_path = os.getcwd()+"\\"
 #         p1 = Process(target=run_algorithm,args=[img,i])
 #         p1.start()
 
-for i in range(6,7):
+for i in range(8,9):
     # if i != 3:
     #     if i != 7:
     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
