@@ -30,7 +30,6 @@ def static_saliency(img, numb):
     # cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_p.jpg",img)
     # cv2.imwrite(data_path+"test_output\\v1\\"+str(numb)+"_thr.jpg",threshMap)
     cv2.imshow("Output image",img)
-    
     cv2.imshow("Threshold", threshMap)
     cv2.waitKey(0)
 

@@ -45,26 +45,20 @@ def mask_rcnn(img, numb):
 		roi_Width = x2 - x1
 		roi_Height = y2 - y1
 		roi = black_image[y1: y2, x1: x2]
-		print(img.shape)
-		print(roi.shape)
+		
 		# roi_height, roi_width, _ = roi.shape
 		# cv2.imshow("mask 1",roi)
 		# Get the mask
 		mask = masks[i, int(class_id)]
-		# imwrite(data_path+"MaskNew.jpg",mask)
-		imshow("MaskNew.jpg",mask)
-		print(mask.shape)
+		# imwrite(data_path+"MaskNew.jpg",mask)		
 		mask = cv2.resize(mask, (roi_Width, roi_Height),interpolation=INTER_CUBIC)
 		_, mask = cv2.threshold(mask, 0.5, 255, cv2.THRESH_BINARY)
 		# cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
-		print(mask.shape)
 		# Get mask coordinates
 		contours, _ = cv2.findContours(np.array(mask, np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		for cnt in contours:
 			cv2.fillPoly(roi, [cnt], 255)
 
-		# cv2.imshow("roi", roi)
-		# cv2.waitKey(0)
 	grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	for i in range(len(img)):
 		for j in range(len(img[0])):
