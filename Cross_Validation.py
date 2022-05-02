@@ -1277,7 +1277,7 @@ def findOptimalParamsV5(listOfEvaluations,evaluationParameters,dictOfBinaryMask,
 
 def runTestV5():
     listTestEvaluations = []
-    numRange = 30
+    numRange = 20
     startTime = time.time()
     for i in range(numRange):
         print("Current run time: ",startTime-time.time())

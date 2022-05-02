@@ -323,37 +323,6 @@ def run_algorithm(img, numb):
     removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
     cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
     cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
-    # ogSlice = cpSlice.copy()
-    # cpSlice = smoothing(ogSlice,cpSlice,imgRange,iterations=4)
-    # imgRange=int(2*imgRange)
-    # print("Range: ",imgRange)
-    # imshow("ogSlice",ogSlice)
-    # imshow("cpSlice",cpSlice)
-    
-    # imgRange=int(imgRange/2)
-
-    # ogSlice = cpSlice.copy()
-    # for i in range(len(ogSlice)):
-    #     for j in range(len(ogSlice[0])):
-    #         workVal = workFunc(ogSlice,imgRange,i,j)
-    #         if(ogSlice[i][j] == 0):
-    #             if workVal > 2:
-    #                 cpSlice[i][j] = 255
-    #         elif(ogSlice[i][j] == 255):
-    #             if workVal < 3:
-    #                 cpSlice[i][j] = 0
-
-    # ogSlice = cpSlice.copy()
-    # imgRange=int(imgRange*4)
-    # for i in range(len(ogSlice)):
-    #     for j in range(len(ogSlice[0])):
-    #         workVal = workFunc(ogSlice,imgRange,i,j)
-    #         if(ogSlice[i][j] == 0):
-    #             if workVal > 3:
-    #                 cpSlice[i][j] = 255
-    #         elif(ogSlice[i][j] == 255):
-    #             if workVal < 2:
-    #                 cpSlice[i][j] = 0
 
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
