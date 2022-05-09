@@ -49,20 +49,20 @@ def findMaxIoUHypothesis():
         # print("Image: ",result_img+j)
     print("Average Max: ",Average_IoU/5)
 
-# def findMaxIoU():
-#     Average_IoU = 0
-#     for j in range(10):
-#         IoU_Max = 0
-#         for i in range(1,6):
-#             img_A = cv2.imread(ground_truth_path+str(result_img+j)+'_gt'+str(i)+'.jpg')
-#             img_B = cv2.imread(train_data_path5+str(result_img+j)+'_thr.jpg')
-#             # img_C = cv2.imread(ground_truth_path+'1_gt1.jpg')
-#             IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
-#             print(calc_IoU(img_A,img_B))
-#         # print("Max: ",IoU_Max)
-#         print("")
-#         Average_IoU+=IoU_Max
-#         # print("Image: ",result_img+j)
-#     print("Average Max: ",Average_IoU/10)
+def findMaxIoU():
+    Average_IoU = 0
+    for j in range(10):
+        IoU_Max = 0
+        for i in range(1,6):
+            img_A = cv2.imread(ground_truth_path+str(result_img+j)+'_gt'+str(i)+'.jpg')
+            img_B = cv2.imread(train_data_path5+str(result_img+j)+'_thr.jpg')
+            # img_C = cv2.imread(ground_truth_path+'1_gt1.jpg')
+            IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
+            print(calc_IoU(img_A,img_B))
+        # print("Max: ",IoU_Max)
+        print("")
+        Average_IoU+=IoU_Max
+        # print("Image: ",result_img+j)
+    print("Average Max: ",Average_IoU/10)
 
 findMaxIoUHypothesis()
