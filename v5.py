@@ -10,7 +10,7 @@ import os
 from multiprocessing import Process
 
 confsThr = 0.4
-boxThr = 0.5
+boxThr = 0.45
 #Loading in rcnn mask model
 net = cv2.dnn.readNetFromTensorflow("dnn\\frozen_inference_graph_coco.pb","dnn\\mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
 #Loading in bounding box model
@@ -29,7 +29,6 @@ def find_optimal_lines(ogSlice,numb):
     size = np.size(temp)
     whiteCount = np.count_nonzero(temp)
     compactness = (whiteCount/size)*100
-    print("Compactness ",compactness,"%1",numb)
     # while (compactness < 6 or compactness > 9):
     if compactness < 3:
         temp = ogSlice.copy()
@@ -38,7 +37,6 @@ def find_optimal_lines(ogSlice,numb):
         size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        print("Compactness ",compactness,"%2",numb)
     if compactness < 3.5:
         temp = ogSlice.copy()
         temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
@@ -47,7 +45,6 @@ def find_optimal_lines(ogSlice,numb):
         size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        print("Compactness ",compactness,"%5",numb)
     if compactness > 8:
         temp = ogSlice.copy()
         temp = cv2.GaussianBlur(ogSlice, (7,7), cv2.BORDER_REFLECT)
@@ -55,7 +52,6 @@ def find_optimal_lines(ogSlice,numb):
         size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        print("Compactness ",compactness,"%3",numb)
     if compactness > 9:
         temp = ogSlice.copy()
         temp = cv2.GaussianBlur(ogSlice, (9,9), cv2.BORDER_CONSTANT)
@@ -63,7 +59,6 @@ def find_optimal_lines(ogSlice,numb):
         size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        print("Compactness ",compactness,"%4",numb)
     if compactness < 6:
         temp = ogSlice.copy()
         temp = cv2.GaussianBlur(ogSlice, (5,5), cv2.BORDER_CONSTANT)
@@ -72,8 +67,6 @@ def find_optimal_lines(ogSlice,numb):
         size = np.size(temp)
         whiteCount = np.count_nonzero(temp)
         compactness = (whiteCount/size)*100
-        print("Compactness ",compactness,"%5",numb)
-    print("Compactness ",compactness,"%",numb)
     return temp
 
 def fillSmallSpace(img, workerRange,x,y):
@@ -186,6 +179,7 @@ def run_algorithm(img, numb):
     net.setInput(blob)
     boxes, masks = net.forward(["detection_out_final", "detection_masks"])
     _, _, boxes2 = net2.detect(img,confThreshold = boxThr)
+
     detection_count = boxes.shape[2]
     boundingBox = []
     for i in range(detection_count):
@@ -194,7 +188,6 @@ def run_algorithm(img, numb):
         confidence = box[2]
         if confidence < confsThr:
             continue
-        
         #Get box coordinates
         box = boxes[0, 0, i, 3:7] * np.array([W, H, W, H])
         (x1, y1, x2, y2) = box.astype("int")
@@ -245,7 +238,7 @@ def run_algorithm(img, numb):
         for j in range(len(ogSlice[0])):
             if maskSlice[i][j] != 255:
                 workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
-                if workVal[0] >= 2 and workVal[1] >= 2 :
+                if (workVal[0] >= 2 and workVal[1] >= 2) or (workVal[0] > 3):
                     cpSlice[i][j] = 255
                 # elif workVal[0] > 3:
                 #     cpSlice[i][j] = 255
@@ -328,17 +321,20 @@ def run_algorithm(img, numb):
                 img[i][j] = grey[i][j]
 
     print("Done with Image: ",numb)
-    # cv2.imshow("Image", img)
-    # cv2.imshow("Black image", black_image)
+    cv2.imshow("Image", img)
+    cv2.imshow("Black image", black_image)
     # cv2.imshow("Black image lines", black_image_lines)
 
     # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
     # cv2.imwrite(data_path+"test_output\\v5\\"+str(numb)+"_p.jpg",img)
 
-    cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
-    cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
+    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    # cv2.imwrite(data_path+"train_output\\v5\\"+str(numb)+"_p.jpg",img)
 
-    # cv2.waitKey(0)
+    # cv2.imwrite(data_path+"hypothesis\\v5\\"+str(numb)+"_thr.jpg",black_image)
+    # cv2.imwrite(data_path+"hypothesis\\v5\\"+str(numb)+"_p.jpg",img)
+
+    cv2.waitKey(0)
             
 data_path = os.getcwd()+"\\"
 
@@ -350,11 +346,16 @@ data_path = os.getcwd()+"\\"
 #         p1 = Process(target=run_algorithm,args=[mask,i])
 #         p1.start()
 
-for i in range(1,11):
-    # if i == 3:
-    #     continue
-    mask = cv2.imread("train_data\\"+str(i)+".jpg")
+# for i in range(1,11):
+#     # if i == 3:
+#     #     continue
+#     mask = cv2.imread("train_data\\"+str(i)+".jpg")
+#     if __name__ == "__main__":
+#         p1 = Process(target=run_algorithm,args=[mask,i])
+#         p1.start()
+
+for i in range(1,8):   
+    mask = cv2.imread("hypothesis\\"+str(i)+".png")
     if __name__ == "__main__":
         p1 = Process(target=run_algorithm,args=[mask,i])
         p1.start()
-

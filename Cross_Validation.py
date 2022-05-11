@@ -98,7 +98,7 @@ def select_new_dataset():
 #Region v1
 #parameters that will be adjusted include: 
 # - thresholding method
-# - saliency type
+# - Thresholding type
 # -   
 #thresholding types need to be defined here
 listOfMethods = [cv2.THRESH_OTSU,cv2.THRESH_TRIANGLE]
@@ -206,8 +206,8 @@ def runTestV1():
 #Region v2
 #parameters that will be adjusted include: 
 # - confidence threshold value
-# - saliency type
-# - image thresholding method
+# - threshold method
+# - threshold type
 listOfMethods = [cv2.THRESH_OTSU,cv2.THRESH_TRIANGLE]
 listOfTypes = [cv2.THRESH_BINARY,cv2.THRESH_TOZERO]
 confidenceList = np.divide(np.arange(10,91,15),100)

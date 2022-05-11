@@ -35,7 +35,7 @@ result_img = 1
 
 def findMaxIoUHypothesis():
     Average_IoU = 0
-    for j in range(0,5):
+    for j in range(0,7):
         IoU_Max = 0
         # for i in range(1,6):
         img_A = cv2.imread(ground_truth_path+str(result_img+j)+'_gt.png')
@@ -44,10 +44,10 @@ def findMaxIoUHypothesis():
         IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
         print(calc_IoU(img_A,img_B))
         # print("Max: ",IoU_Max)
-        print("")
+        # print("")
         Average_IoU+=IoU_Max
         # print("Image: ",result_img+j)
-    print("Average Max: ",Average_IoU/5)
+    print("Average Max: ",Average_IoU/7)
 
 def findMaxIoU():
     Average_IoU = 0
@@ -60,7 +60,7 @@ def findMaxIoU():
             IoU_Max = max(calc_IoU(img_A,img_B),IoU_Max)
             print(calc_IoU(img_A,img_B))
         # print("Max: ",IoU_Max)
-        print("")
+        # print("")
         Average_IoU+=IoU_Max
         # print("Image: ",result_img+j)
     print("Average Max: ",Average_IoU/10)

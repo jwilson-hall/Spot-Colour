@@ -357,7 +357,7 @@ def run_algorithm(img, numb):
 
     # cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_thr.jpg",fMask)
     # cv2.imwrite(data_path+"test_output\\v4\\"+str(numb)+"_p.jpg",fOutput)
-    # cv2.waitKey(0)
+    cv2.waitKey(0)
 
 # img = cv2.imread(data_path+"test_data\\"+'6.jpg')
 # run_algorithm(img, 1)
@@ -369,7 +369,7 @@ data_path = os.getcwd()+"\\"
 #         p1 = Process(target=run_algorithm,args=[img,i])
 #         p1.start()
 
-for i in range(8,9):
+for i in range(1,11):
     # if i != 3:
     #     if i != 7:
     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')

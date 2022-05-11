@@ -36,7 +36,7 @@ def mask_rcnn(img, numb):
 		class_id = box[1]
 		# print(class_id)
 		confs = box[2]
-		if confs < 0.5:
+		if confs < 0.4:
 			continue
 
 		# Get box coordinates
@@ -74,7 +74,9 @@ def mask_rcnn(img, numb):
 	# cv2.imwrite(data_path+"train_output\\v3\\"+str(numb)+"_thr.jpg",black_image)
 	# cv2.imwrite(data_path+"test_output\\v3\\"+str(numb)+"_p.jpg",img)
 	# cv2.imwrite(data_path+"test_output\\v3\\"+str(numb)+"_thr.jpg",black_image)
-	
+
+	# cv2.imwrite(data_path+"hypothesis\\v3\\"+str(numb)+"_thr.jpg",black_image)
+	# cv2.imwrite(data_path+"hypothesis\\v3\\"+str(numb)+"_p.jpg",img)
 
 # looks for current working directory
 data_path = os.getcwd()+"\\"
@@ -84,14 +86,19 @@ data_path = os.getcwd()+"\\"
 # mask_rcnn(img,2)
 # p1 = Process(target=mask_rcnn,args=[img,2])
 # p1.start()
-for i in range(8,9):
+for i in range(1,11):
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     if __name__ == '__main__':
         p1 = Process(target=mask_rcnn,args=[img,i])
         p1.start()
 
-# for i in range(1,2):
+# for i in range(1,11):
 #     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
 #     if __name__ == '__main__':
 #         p1 = Process(target=mask_rcnn,args=[img,i])
+#         p1.start()
+# for i in range(1,8):
+#     mask = cv2.imread("hypothesis\\"+str(i)+".png")
+#     if __name__ == "__main__":
+#         p1 = Process(target=mask_rcnn,args=[mask,i])
 #         p1.start()
