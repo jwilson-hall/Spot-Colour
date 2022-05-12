@@ -5,23 +5,23 @@ import numpy as np
 from multiprocessing import Process
 # from numba import jit
 # from gevent import config
-thres = 0.5 # Threshold to detect object
+thres = 0.45 # Threshold to detect object
 image_path = os.path.dirname
 
 # configPath = 'frozen_inference_graph.pb'
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
-weightsPath = 'frozen_inference_graph.pb'
+weightsPath = 'frozen_inference_graph.pb'#set config path of network
 
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
 net.setInputSize(320,320)
 net.setInputScale(1.0/127.5)
 net.setInputMean((127.5,127.5,127.5))
-net.setInputSwapRB(True)
+net.setInputSwapRB(True)#setting network configuration
 
 
 # test_data_path = os.path.dirname(os.getcwd())+"\\data\\new_test_data\\"
 
-def workFunc(img, workerRange,x,y):
+def workFunc(img, workerRange,x,y):#function looking for neighbours in 4 directions
     count = 0
     down = 0
     up = 0
@@ -103,19 +103,18 @@ def fillSmallSpace(img, workerRange,x,y):
                 left+=1
                 tempFalse=True
                 break
-    return count
+    return count# returns the count of white pixels surrounding input pixel
     # return up,down,left,right
 
 
 
-def smoothing(ogSlice, cpSlice,imgRange,iterations):
+def smoothing(ogSlice, cpSlice,imgRange,iterations):#fills in gaps within the binary mask
     for i in range(iterations):
         if(imgRange > len(ogSlice)/2):
             imgRange = int(imgRange*0.5) 
         print("pixel range ",imgRange)
         ogSlice = cpSlice.copy()
         print("Iteration: ",i+1)
-        # imgRange=int(imgRange/2)
         for i in range(len(ogSlice)):
             for j in range(len(ogSlice[0])):
                 workVal = workFunc(ogSlice,imgRange,i,j)
@@ -127,7 +126,7 @@ def smoothing(ogSlice, cpSlice,imgRange,iterations):
                         cpSlice[i][j] = 0
     return cpSlice
 
-def find_optimal_lines(ogSlice,numb):
+def find_optimal_lines(ogSlice,numb):#attempts to find the best parameters to use for the canny edge detector
     temp = ogSlice.copy()
     temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
     # ogSlice = cv2.Canny(ogSlice,125,150)
@@ -194,7 +193,7 @@ def run_algorithm(img, numb):
     confidenceList = []
     imgNew = img.copy()
     imgNew.fill(0)
-    for classId,confidence,box in zip(classIds.flatten(),confs.flatten(),bbox):
+    for classId,confidence,box in zip(classIds.flatten(),confs.flatten(),bbox):#get bounding boxes from network, parsing information to list
         x1 = box[0]
         y1 = box[1]
         x2 = box[2]
@@ -213,7 +212,7 @@ def run_algorithm(img, numb):
                 imgNew[j][i] = img[j][i]
     
     for b in boxes:
-        maxX = max(maxX,b[0]+b[2])
+        maxX = max(maxX,b[0]+b[2])#finding the total bounding region of all bounding boxes
         maxY = max(maxY,b[1]+b[3])
         minX = min(minX,b[0])
         minY = min(minY,b[1])
@@ -232,7 +231,7 @@ def run_algorithm(img, numb):
     fMask = np.copy(img)
     fMask.fill(0)
     ogSlice = img[minY:maxY,minX:maxX]
-    ogSlice = find_optimal_lines(ogSlice,numb)
+    ogSlice = find_optimal_lines(ogSlice,numb)#returns lines of edge detector on ROI
     ogSlice = cv2.dilate(ogSlice,(7,7))
     
     # imshow("Lines:",ogSlice)
@@ -240,30 +239,20 @@ def run_algorithm(img, numb):
     newSlice = ogSlice.copy()
     newSlice.fill(0)
 
-    for b in boxes:
+    for b in boxes:# removes the lines detected outside the bounding boxes within the larger ROI
         for i in range(b[0]-minX,(b[2]+b[0])-minX):
             for j in range(b[1]-minY,(b[3]+b[1])-minY):
                 newSlice[j][i] = ogSlice[j][i]
 
     ogSlice = newSlice
-    # ogSlice = cv2.dilate(ogSlice,(3,3), iterations=2)
     cpSlice = ogSlice.copy()
     imgRange = int(max(len(ogSlice)*0.08,len(ogSlice[0])*0.08))
-    # print("Range: ",imgRange)
-    # imgRange = int(len(ogSlice)/5)
-    # print("Pixel amount ",workFunc(ogSlice,imgRange,99,98))
-    # cpSlice[99][98] = 0
+    
     workVal = 0
-    # for i in range(len(ogSlice)):
-    #     for j in range(len(ogSlice[0])):
-    #         workVal = workFunc(ogSlice,imgRange,i,j)            
-    #         if(ogSlice[i][j] != 0):
-    #             if workVal < 4:
-    #                 cpSlice[i][j] = 0
-    # ogSlice = cpSlice.copy()
     
     
-    ogSlice = cpSlice.copy()
+    
+    ogSlice = cpSlice.copy()#fills in the small spaces between the lines
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             workVal = fillSmallSpace(ogSlice,int(max(len(ogSlice)/100,len(ogSlice[0])/100)),i,j)
@@ -278,7 +267,7 @@ def run_algorithm(img, numb):
     # imshow("cpSlice",cpSlice)
     # waitKey(0)
     
-    ogSlice = cpSlice.copy()
+    ogSlice = cpSlice.copy()#fills in gaps surrounded on all 4 sides
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
             workVal = workFunc(ogSlice,int(max(len(ogSlice)/3,len(ogSlice[0])/3)),i,j)
@@ -288,7 +277,7 @@ def run_algorithm(img, numb):
     ogSlice = cpSlice.copy()
     tempRange = int(max(len(ogSlice)/50,len(ogSlice[0])/50))
     # print(tempRange)
-    for i in range(len(ogSlice)):
+    for i in range(len(ogSlice)):# attempts to fill in any more small spaces within the mask
         for j in range(len(ogSlice[0])):
             workVal = fillSmallSpace(ogSlice,tempRange,i,j)
             if(ogSlice[i][j] != 255):
@@ -318,31 +307,31 @@ def run_algorithm(img, numb):
     drcontours = cv2.cvtColor(drcontours, cv2.COLOR_GRAY2RGB)
     removeIslands = cv2.pyrDown(rmSlice)
     _, threshed = cv2.threshold(rmSlice, 0, 255, cv2.THRESH_BINARY)
-    contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours,_ = cv2.findContours(threshed, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)#finds contours
 
     #find maximum contour and draw   
-    cmax = max(contours, key = cv2.contourArea) 
+    cmax = max(contours, key = cv2.contourArea) #finds the largest contour
     epsilon = 0.002 * cv2.arcLength(cmax, True)
-    approx = cv2.approxPolyDP(cmax, epsilon, True)
-    cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)
+    approx = cv2.approxPolyDP(cmax, epsilon, True)#creates polygones of mask 
+    cv2.drawContours(drcontours, [approx], -1, (0, 255, 0), 2)#
     width, height = rmSlice.shape
     # imshow("Contour", drcontours)
     # waitKey(0)
     #fill maximum contour and draw   
-    removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
+    removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )#removes the islands except the largest polygon
     cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
     cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
 
     for i in range(len(ogSlice)):
         for j in range(len(ogSlice[0])):
-            fMask[minY+i][minX+j] = cpSlice[i][j]
+            fMask[minY+i][minX+j] = cpSlice[i][j]#puts the binary mask back into the original size instead of the ROI size
     
     fOutput = cv2.cvtColor(fOutput, cv2.COLOR_BGR2GRAY)     
     fOutput = cv2.cvtColor(fOutput, cv2.COLOR_GRAY2RGB)
 
     for i in range(len(fOutput)):
         for j in range(len(fOutput[0])):
-            if fMask[i][j][0] == 255:
+            if fMask[i][j][0] == 255:#creates the output image from the binary mask
                 fOutput[i][j] = img[i][j]
         
     cv2.imshow("fMask",fMask)
@@ -363,16 +352,14 @@ def run_algorithm(img, numb):
 # run_algorithm(img, 1)
 data_path = os.getcwd()+"\\"
 
-# for i in range(1,11):
-#     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
-#     if __name__ == '__main__':
-#         p1 = Process(target=run_algorithm,args=[img,i])
-#         p1.start()
-
-for i in range(1,11):
-    # if i != 3:
-    #     if i != 7:
-    img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+for i in range(1,11):#run each image on a new thread for efficient processing time
+    img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     if __name__ == '__main__':
         p1 = Process(target=run_algorithm,args=[img,i])
         p1.start()
+
+# for i in range(1,11):#run each image on a new thread for efficient processing time
+#     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
+#     if __name__ == '__main__':
+#         p1 = Process(target=run_algorithm,args=[img,i])
+#         p1.start()

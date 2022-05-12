@@ -18,21 +18,21 @@ net = cv2.dnn.readNetFromTensorflow("dnn/frozen_inference_graph_coco.pb","dnn/ma
 
 def mask_rcnn(img, numb):
 		
-	H, W, _ = img.shape
+	H, W, _ = img.shape # retrieves image shape
 
 	# Create black image with same dimensions as input image
-	black_image = np.zeros((H, W, 1), np.uint8)
+	black_image = np.zeros((H, W, 1), np.uint8) # creates black image with same shape as input image for binary mask
 
 
 	# Detect objects inside input image
 	blob = cv2.dnn.blobFromImage(img, swapRB=True)
 	net.setInput(blob)
 
-	boxes, masks = net.forward(["detection_out_final", "detection_masks"])
+	boxes, masks = net.forward(["detection_out_final", "detection_masks"])#processing the image through the network
 	detection_count = boxes.shape[2]
 
-	for i in range(detection_count):
-		box = boxes[0, 0, i]
+	for i in range(detection_count):#runs through all the detections of the network and only processes the detections that meet
+		box = boxes[0, 0, i]# the confidence threshold requirement
 		class_id = box[1]
 		# print(class_id)
 		confs = box[2]
@@ -46,16 +46,15 @@ def mask_rcnn(img, numb):
 		roi_Height = y2 - y1
 		roi = black_image[y1: y2, x1: x2]
 		
-		# roi_height, roi_width, _ = roi.shape
-		# cv2.imshow("mask 1",roi)
+		
 		# Get the mask
 		mask = masks[i, int(class_id)]
 		# imwrite(data_path+"MaskNew.jpg",mask)		
-		mask = cv2.resize(mask, (roi_Width, roi_Height),interpolation=INTER_CUBIC)
-		_, mask = cv2.threshold(mask, 0.5, 255, cv2.THRESH_BINARY)
+		mask = cv2.resize(mask, (roi_Width, roi_Height),interpolation=INTER_CUBIC)#use interpolation to resize the mask to original ROI size from 15x15 output
+		_, mask = cv2.threshold(mask, 0.5, 255, cv2.THRESH_BINARY)#thresholding the image to make sure its a binary mask from interpolation
 		# cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
 		# Get mask coordinates
-		contours, _ = cv2.findContours(np.array(mask, np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+		contours, _ = cv2.findContours(np.array(mask, np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)#draws the binary mask onto generated black image
 		for cnt in contours:
 			cv2.fillPoly(roi, [cnt], 255)
 
@@ -86,7 +85,7 @@ data_path = os.getcwd()+"\\"
 # mask_rcnn(img,2)
 # p1 = Process(target=mask_rcnn,args=[img,2])
 # p1.start()
-for i in range(1,11):
+for i in range(1,11):#run each image on a new thread for efficient processing time
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     if __name__ == '__main__':
         p1 = Process(target=mask_rcnn,args=[img,i])

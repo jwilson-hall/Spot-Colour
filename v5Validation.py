@@ -388,7 +388,7 @@ def v5(img,numb,PARAMETERS,dictOfBinaryMask):
             for j in range(len(ogSlice[0])):
                 if maskSlice[i][j] != 255:
                     workVal = smoothing(maskSlice,ogSlice,workerRange,i,j)
-                    if workVal[0] >= 2 and workVal[1] >= 2 :
+                    if (workVal[0] >= 2 and workVal[1] >= 2) or (workVal[0] > 3) :
                         cpSlice[i][j] = 255
                     # elif workVal[0] > 3:
                     #     cpSlice[i][j] = 255

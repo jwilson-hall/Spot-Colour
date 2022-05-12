@@ -6,40 +6,30 @@ thres = 0.45 # Threshold to detect object
 image_path = os.path.dirname
 
 configPath = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
-weightsPath = 'frozen_inference_graph.pb'
+weightsPath = 'frozen_inference_graph.pb'#paths for network
 
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
 net.setInputSize(320,320)
 net.setInputScale(1.0/127.5)
 net.setInputMean((127.5,127.5,127.5))
-net.setInputSwapRB(True)
+net.setInputSwapRB(True)#defining network configuration
 
 
 
 def run_algorithm(img, numb):
-    classIds, confs, bbox = net.detect(img,confThreshold = 0.5)
-    # print("BOX: ",bbox[0])
-    # x1 = bbox[0][0]
-    # y1 = bbox[0][1]
-    # x2 = bbox[0][2]
-    # y2 = bbox[0][3]
+    classIds, confs, bbox = net.detect(img,confThreshold = 0.5)    
     boxes = []
     confidenceList = []
-    for classId,confidence,box in zip(classIds.flatten(),confs.flatten(),bbox):
+    for classId,confidence,box in zip(classIds.flatten(),confs.flatten(),bbox):#get bounding boxes from network, parsing information to list
         x1 = box[0]
         y1 = box[1]
         x2 = box[2]
         y2 = box[3]
         boxes.append([x1,y1,x2,y2])
         confidenceList.append(confidence)
-        # print(confs)
-        # print(classNames[classId])
-        # cv2.rectangle(img,[x1,y1,x2,y2],color=(0,0,255),thickness=3)
-        # print(box)
+        
 
-    # saliency = cv2.saliency.Objectness_create()
-    # (success, saliencyMap) = saliency.computeSaliency(img)
-    # saliencyMap = (saliencyMap * 255).astype("uint8")
+    
 
     # Initialise static saliency fine grained detector and compute the saliencyMap
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()

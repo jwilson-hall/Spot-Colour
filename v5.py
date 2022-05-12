@@ -21,7 +21,7 @@ net2.setInputMean((127.5,127.5,127.5))
 net2.setInputSwapRB(True)
 #load our input image and grab its spatial dimensions
 
-def find_optimal_lines(ogSlice,numb):
+def find_optimal_lines(ogSlice,numb):#attempts to find the best parameters to use for the canny edge detector
     temp = ogSlice.copy()
     temp = cv2.GaussianBlur(ogSlice, (13,13), cv2.BORDER_CONSTANT)
     # ogSlice = cv2.Canny(ogSlice,125,150)
@@ -69,7 +69,7 @@ def find_optimal_lines(ogSlice,numb):
         compactness = (whiteCount/size)*100
     return temp
 
-def fillSmallSpace(img, workerRange,x,y):
+def fillSmallSpace(img, workerRange,x,y):#function fills in small gaps between 2 white pixels
     count = 0
     down = 0
     up = 0
@@ -113,7 +113,7 @@ def fillSmallSpace(img, workerRange,x,y):
                 break
     return count
 
-def smoothing(mask,lineImage, workerRange,x,y):
+def smoothing(mask,lineImage, workerRange,x,y):#function looking for neighbours in 4 directions
     maskCount = 0
     lineCount = 0
     tempFalse = False
@@ -173,16 +173,16 @@ def run_algorithm(img, numb):
         
     H, W, _ = img.shape
     # Create black image with same dimensions as input image
-    black_image = np.zeros((H, W), np.uint8)
+    black_image = np.zeros((H, W), np.uint8)# creates black image from input image so it has the same dimensions
     # Detect objects inside input image
     blob = cv2.dnn.blobFromImage(img, swapRB=True)
     net.setInput(blob)
-    boxes, masks = net.forward(["detection_out_final", "detection_masks"])
-    _, _, boxes2 = net2.detect(img,confThreshold = boxThr)
+    boxes, masks = net.forward(["detection_out_final", "detection_masks"])#parses the image top the network and gets the binary mask
+    _, _, boxes2 = net2.detect(img,confThreshold = boxThr)#parses the image top the network and gets the output boxes
 
     detection_count = boxes.shape[2]
     boundingBox = []
-    for i in range(detection_count):
+    for i in range(detection_count):#looks through all the detections of the network and skips over the ones that are below the threshold
         box = boxes[0, 0, i]    
         classID = int(box[1])
         confidence = box[2]
@@ -210,15 +210,15 @@ def run_algorithm(img, numb):
     maxY = 0
     minX = len(img)*len(img[0])
     minY = len(img)*len(img[0])
-    for box in boundingBox:
+    for box in boundingBox:#finds the bounding region of all the bounding boxes 
         maxX = max(maxX,box[2])
         maxY = max(maxY,box[3])
         minX = min(minX,box[0])
         minY = min(minY,box[1])
 
-    ogSlice = img[minY:maxY, minX:maxX]
+    ogSlice = img[minY:maxY, minX:maxX]#slice is set to the bounding area
     maskSlice = black_image[minY:maxY, minX:maxX]
-    ogSlice = find_optimal_lines(ogSlice,numb)
+    ogSlice = (ogSlice,numb)
     ogSlice = cv2.dilate(ogSlice,(5,5),iterations=3)
     # cv2.imshow("OG Slice ", ogSlice)
     newSlice = ogSlice.copy()
@@ -244,10 +244,9 @@ def run_algorithm(img, numb):
                 #     cpSlice[i][j] = 255
     # ogSlice = cpSlice.copy()
     cpSlice2 = cpSlice.copy()
-    cpSlice = cv2.bitwise_or(maskSlice,ogSlice)
-    cpSlice = cv2.bitwise_or(cpSlice2,cpSlice)
-    # cpSlice = cpSlice2
-    smallWorkerRange = int(max(len(ogSlice)/100,len(ogSlice[0])/100))
+    cpSlice = cv2.bitwise_or(maskSlice,ogSlice)#combining the images
+    cpSlice = cv2.bitwise_or(cpSlice2,cpSlice)#combining all the images
+    # cpSlice = cpSlice2    
     for i in range(len(cpSlice)):
         for j in range(len(cpSlice[0])):
             if maskSlice[i][j] != 255:
@@ -263,7 +262,7 @@ def run_algorithm(img, numb):
     
     img2 = output.copy()
     img2.fill(0)
-    for i in range(0, nb_components):
+    for i in range(0, nb_components):#removal of objects that are smaller than half the size of the biggest detected object
         if sizes[i] >= biggestObject:
             img2[output == i + 1] = 255
     
@@ -297,7 +296,7 @@ def run_algorithm(img, numb):
     # waitKey(0)
     #fill maximum contour and draw   
     removeIslands = np.zeros( [width, height, 3],dtype=np.uint8 )
-    cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))
+    cv2.fillPoly(removeIslands, pts =[cmax], color=(255,255,255))#removes small islands
     cpSlice = cv2.cvtColor(removeIslands, cv2.COLOR_BGR2GRAY)
 
     # waitKey(0)
@@ -318,7 +317,7 @@ def run_algorithm(img, numb):
     for i in range(len(img)):
         for j in range(len(img[0])):
             if black_image[i][j] != 255:
-                img[i][j] = grey[i][j]
+                img[i][j] = grey[i][j]#uses the binary mask as a guide to colour the spot colour region
 
     print("Done with Image: ",numb)
     cv2.imshow("Image", img)
@@ -354,7 +353,7 @@ data_path = os.getcwd()+"\\"
 #         p1 = Process(target=run_algorithm,args=[mask,i])
 #         p1.start()
 
-for i in range(1,8):   
+for i in range(1,8):
     mask = cv2.imread("hypothesis\\"+str(i)+".png")
     if __name__ == "__main__":
         p1 = Process(target=run_algorithm,args=[mask,i])

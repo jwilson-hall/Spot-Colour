@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import os
 
-def static_saliency(img, numb):
+def static_saliency(img, numb):#takes image as input and image number
     
     saliency = cv2.saliency.StaticSaliencyFineGrained_create()# calculating the static saliency fine grained map
     (success, saliencyMap) = saliency.computeSaliency(img)
@@ -35,12 +35,11 @@ def static_saliency(img, numb):
 
 data_path = os.getcwd()+"\\"
 files = os.listdir(data_path)
-# img = cv2.imread(data_path+"test_data\\"+str(1)+'.jpg')
-# static_saliency(img,1)
+
 #runnning test and train images
-for i in range(8,9):
+for i in range(1,11):#running algorithm on all training images
     img = cv2.imread(data_path+"train_data\\"+str(i)+'.jpg')
     static_saliency(img,i)
-# for i in range(1,11):
+# for i in range(1,11):#running algorithm on all testing images
 #     img = cv2.imread(data_path+"test_data\\"+str(i)+'.jpg')
 #     static_saliency(img,i)
