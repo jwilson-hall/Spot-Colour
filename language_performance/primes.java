@@ -2,7 +2,7 @@ import java.util.*;
 import java.lang.Math;
 
 class PrimeNumbersGenerator {
-	ArrayList<Integer> get_primes7(int n) {
+	ArrayList<Integer> calc_prime(int n) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
 
 		if (n < 2) return res;
@@ -47,7 +47,7 @@ class PrimeNumbersBenchmarkApp {
 
 		ArrayList<Integer> res;
 
-		res = (new PrimeNumbersGenerator()).get_primes7(100000000);
+		res = (new PrimeNumbersGenerator()).calc_prime(100000000);
 		System.out.format("Found %d prime numbers.\n", res.size());
 		long endTime = System.nanoTime();
 		long totalTime = (endTime-startTime)/1000;

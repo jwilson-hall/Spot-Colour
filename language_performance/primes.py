@@ -3,21 +3,16 @@ import sys
 import time
 
 
-def get_primes7(n):
-	"""
-	standard optimized sieve algorithm to get a list of prime numbers
-	--- this is the function to compare your functions against! ---
-	"""
+def calc_prime(n):
 	if n < 2:
 		return []
 	if n == 2:
 		return [2]
-	# do only odd numbers starting at 3
+	# start from 3
 	if sys.version_info.major <= 2:
 		s = range(3, n + 1, 2)
-	else:  # Python 3
+	else:
 		s = list(range(3, n + 1, 2))
-	# n**0.5 simpler than math.sqr(n)
 	mroot = n ** 0.5
 	half = len(s)
 	i = 0
@@ -35,7 +30,6 @@ def get_primes7(n):
 
 start_time = int(time.time())
 
-#while (int(time.time()) - start_time) < period_time:
-res = get_primes7(100000000)
+res = calc_prime(100000000)
 print("Found {} prime numbers.".format(len(res)))
 print("Time Elapsed", time.time() - start_time)

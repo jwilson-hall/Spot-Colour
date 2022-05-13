@@ -1,4 +1,4 @@
-function get_primes7(n) {
+function calc_prime(n) {
 	if (n < 2) { return []; }
 	if (n == 2) { return [2]; }
 
@@ -25,8 +25,6 @@ function get_primes7(n) {
 		m = 2*i + 3;
 	}
 
-	// due to a bug in node.js 4.3, we need to declare and init on separate lines
-	// or else node.js performs about four times slower
 	var res = [];
 	res.push(2);
 
@@ -39,7 +37,7 @@ function get_primes7(n) {
 }
 
 var startTime = Date.now();
-var res = get_primes7(100000000);
+var res = calc_prime(100000000);
 var endTime = Date.now()-startTime;
 console.log("Found " + res.length + " prime numbers.");
 console.log("Time Elapsed:  " + endTime );
