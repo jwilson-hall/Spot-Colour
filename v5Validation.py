@@ -1,6 +1,5 @@
 #C1949699
 #
-#
 import math
 import random
 import re

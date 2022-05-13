@@ -1,6 +1,5 @@
 #C1949699
 #
-#Joseph Wilson-Hall
 import math
 import random
 import re
